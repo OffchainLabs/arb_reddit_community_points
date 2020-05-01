@@ -1,6 +1,6 @@
 import Twitter from "twitter"
 
-import env from "./env_variables";
+import env from "./constants";
 
 const client = new Twitter({
     consumer_key: env.consumerKey,
@@ -10,10 +10,14 @@ const client = new Twitter({
 });
 
 
-const startStream = ()=>{
+export const startStream = (cb)=>{
     const stream = client.stream('statuses/filter', {track: '@OffchainLabs'});
-    stream.on('data', function(event) {
-    console.log(event && event.text);
-    });
+    stream.on('data', cb);
 }
-export default startStream
+
+export const reply = (text: string, tweet: any) => {
+    client.post('status/update',{
+        status:`${tweet.user.screen_name} text`,
+        in_reply_status_id: tweet.id_str
+    })
+}
