@@ -24,7 +24,9 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "arb-provider-ethers": "^0.4.7",
     "dotenv": "^8.2.0",
+    "ethers": "^4.0.47",
     "twitter": "^1.7.1"
   }
 }
