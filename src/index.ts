@@ -1,5 +1,6 @@
-const Twitter = require('twitter');
-const env = require('./env_variables')
+import Twitter from "twitter"
+
+import env from "./env_variables";
 
 const client = new Twitter({
     consumer_key: env.consumerKey,
