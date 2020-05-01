@@ -1,5 +1,5 @@
 import { startStream, reply } from './twitter'
-import { sendEther } from './arb'
+import { sendEther, sendToken } from './arb'
 
 
 startStream( async (tweet)=> {

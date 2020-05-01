@@ -21,6 +21,8 @@
     "eslint": "^6.8.0",
     "prettier": "^2.0.5",
     "tslint": "^6.1.2",
+    "typechain": "^1.0.5",
+    "typechain-target-ethers": "^1.0.4",
     "typescript": "^3.8.3"
   },
   "dependencies": {

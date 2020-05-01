@@ -8,5 +8,5 @@ export default  {
     arbProviderUrl: process.env.ARB_PROVIDER_URL,
     ethProviderUrl: process.env.ETH_PROVIDER_URL,
     privateKey: process.env.PRIVATE_KEY,
-    tokenAddress: '0x123498761298467'
+    tokenAddress: process.env.TOKEN_ADDRESS
 }

@@ -1,5 +1,5 @@
-import ethers from 'ethers'
-import { ArbProvider, } from 'arb-provider-ethers'
+import { ethers } from 'ethers'
+import { ArbProvider } from 'arb-provider-ethers'
 import env from './constants'
 import { ArbERC20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbERC20Factory'
 
@@ -24,6 +24,6 @@ export const sendEther = (to: string) => {
   return arbWallet.sendTransaction({to, value })
 }
 
-export const sendERC20 = (to: string)=> {
+export const sendToken = (to: string)=> {
   return arbERC20.transfer(to, 100)
 }
