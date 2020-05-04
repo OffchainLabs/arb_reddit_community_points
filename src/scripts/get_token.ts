@@ -1,5 +1,5 @@
 import request from "request"
-import env from "../env_variables";
+import env from "../constants";
 
 const credentials = `${env.consumerKey}:${env.consumerSecret}`;
 const credentialsBase64Encoded =  Buffer.from(credentials).toString('base64');
@@ -14,8 +14,9 @@ request({
     },
     body: 'grant_type=client_credentials'
 }, function(err, resp, body) {
-  console.warn('err');
-  
-    console.log(body); // the bearer token ...
+  if (err){
+    console.warn('token retrieval error', err);
+    return
+  }
+  console.info(body); // the bearer token ...
 });
-
