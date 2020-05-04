@@ -3,11 +3,13 @@ import { sendEther, sendToken } from './arb'
 
 
 startStream( async (tweet)=> {
+    console.info(tweet && `incoming tweet: ${tweet.text}`);
 
     if (!isFaucetRequest(tweet.text))return
 
     const address = extractAddress(tweet.text)
     if (!address){
+        console.info('no address')
         return reply("Missing Address!", tweet)
     }
 
@@ -29,5 +31,5 @@ const extractAddress = (str: string): string=> {
 
 const isFaucetRequest = (tweetText): boolean=>{
     // TODO
-    return tweetText.includes("arb me up")
+    return tweetText.includes("testin")
 }

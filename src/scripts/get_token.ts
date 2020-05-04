@@ -3,7 +3,6 @@ import env from "../constants";
 
 const credentials = `${env.consumerKey}:${env.consumerSecret}`;
 const credentialsBase64Encoded =  Buffer.from(credentials).toString('base64');
-console.warn("creds",credentialsBase64Encoded );
 
 request({
     url: 'https://api.twitter.com/oauth2/token',
