@@ -2,7 +2,12 @@ import Twitter from "twitter"
 
 import env from "./constants";
 
-const client = new Twitter({
+const client = new Twitter(
+    env.bearerToken ? {
+        consumer_key: env.consumerKey,
+        consumer_secret: env.consumerSecret,
+        bearer_token: env.bearerToken
+    } : {
     consumer_key: env.consumerKey,
     consumer_secret: env.consumerSecret,
     access_token_key: env.accessTokenKey,
