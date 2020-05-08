@@ -9,5 +9,6 @@ export default  {
     ethProviderUrl: process.env.ETH_PROVIDER_URL,
     privateKey: process.env.PRIVATE_KEY,
     tokenAddress: process.env.TOKEN_ADDRESS,
-    bearerToken: process.env.BEARER_TOKEN
+    bearerToken: process.env.BEARER_TOKEN,
+    faucetWalletAddress: process.env.FAUCET_WALLET_ADDRESS,
 }

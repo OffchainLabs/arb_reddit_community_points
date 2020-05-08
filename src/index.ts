@@ -1,5 +1,5 @@
 import { startStream, reply } from './twitter'
-import { sendEther, sendToken } from './arb'
+import { transfer } from './arb'
 
 
 startStream( async (tweet)=> {
@@ -13,11 +13,14 @@ startStream( async (tweet)=> {
         return reply("Missing Address!", tweet)
     }
 
-    const tx = await sendEther(address)
+    const tx = await transfer(address)
     const receipt = await tx.wait()
     const { transactionHash } = receipt
 
-    reply(`Funds sent! https://etherscan.io/tx/${transactionHash}`, tweet)
+    // TODO: transactionHash is the arbitrum transaction hash so the etherscan link wouldn't be valid
+    // What would be good to put here? If we wanted we could get the transaction of the assertion that
+    // processed the transfer or the hash of the message batch that included it
+    reply(`Funds sent! https://ropsten.etherscan.io/tx/${transactionHash}`, tweet)
 
 
 })

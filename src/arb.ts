@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { ArbProvider } from 'arb-provider-ethers'
 import env from './constants'
 import { ArbERC20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbERC20Factory'
+import { FaucetWalletFactory } from './FaucetWalletFactory'
 
 const ETH_AMOUNT = 1
 const ARB_COIN_AMOUNT = 100
@@ -13,17 +14,12 @@ const arbProvider = new ArbProvider(
     ethereumProvider
   );
 
-const  arbWallet = new ethers.Wallet(env.privateKey, arbProvider);
-const arbERC20 = ArbERC20Factory.connect(
-  env.tokenAddress,
+const arbWallet = new ethers.Wallet(env.privateKey, arbProvider);
+const arbFaucetWallet = FaucetWalletFactory.connect(
+  env.faucetWalletAddress,
   arbWallet
 )
 
-export const sendEther = (to: string) => {
-  const value = ethers.utils.parseEther('1.0');
-  return arbWallet.sendTransaction({to, value })
-}
-
-export const sendToken = (to: string)=> {
-  return arbERC20.transfer(to, 100)
+export const transfer = (to: string)=> {
+  return arbFaucetWallet.transfer(to)
 }
