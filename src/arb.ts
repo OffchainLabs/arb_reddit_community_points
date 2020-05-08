@@ -1,8 +1,11 @@
+import * as fetch from "node-fetch";
 import { ethers } from 'ethers'
-import { ArbProvider } from 'arb-provider-ethers'
+import { ArbProvider, ArbWallet } from 'arb-provider-ethers'
 import env from './constants'
 import { ArbERC20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbERC20Factory'
 import { FaucetWalletFactory } from './FaucetWalletFactory'
+
+(global as any).fetch = fetch;
 
 const ethereumProvider = new ethers.providers.JsonRpcProvider(env.ethProviderUrl)
 
@@ -18,6 +21,10 @@ const arbFaucetWallet = FaucetWalletFactory.connect(
   arbWallet
 )
 
-export const transfer = (to: string)=> {
+export const transfer = (to: string) => {
   return arbFaucetWallet.transfer(to)
+}
+
+export const resetFaucet() = (ethValue: ethers.utils.BigNumber, tokenValue: ethers.utils.BigNumber) => {
+	return arbFaucetWallet.updateFaucet(env.tokenAddress, tokenValue, ethValue)
 }
