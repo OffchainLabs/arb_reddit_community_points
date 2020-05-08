@@ -4,17 +4,15 @@ import env from './constants'
 import { ArbERC20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbERC20Factory'
 import { FaucetWalletFactory } from './FaucetWalletFactory'
 
-const ETH_AMOUNT = 1
-const ARB_COIN_AMOUNT = 100
-
-const  ethereumProvider = new ethers.providers.JsonRpcProvider (env.ethProviderUrl)
+const ethereumProvider = new ethers.providers.JsonRpcProvider(env.ethProviderUrl)
 
 const arbProvider = new ArbProvider(
     env.arbProviderUrl,
     ethereumProvider
   );
 
-const arbWallet = new ethers.Wallet(env.privateKey, arbProvider);
+const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
+const arbWallet = new ArbWallet(ethereumWallet, arbProvider);
 const arbFaucetWallet = FaucetWalletFactory.connect(
   env.faucetWalletAddress,
   arbWallet
