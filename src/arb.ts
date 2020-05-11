@@ -25,6 +25,6 @@ export const transfer = (to: string) => {
   return arbFaucetWallet.transfer(to)
 }
 
-export const resetFaucet() = (ethValue: ethers.utils.BigNumber, tokenValue: ethers.utils.BigNumber) => {
+export const resetFaucet = (ethValue: ethers.utils.BigNumber, tokenValue: ethers.utils.BigNumber) => {
 	return arbFaucetWallet.updateFaucet(env.tokenAddress, tokenValue, ethValue)
 }
