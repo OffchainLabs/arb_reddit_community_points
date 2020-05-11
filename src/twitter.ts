@@ -14,7 +14,7 @@ const client = new Twitter({
 
 
 export const startStream = (cb)=>{
-    const stream = client.stream('statuses/filter', {track: '@OffChainLabs'});
+    const stream = client.stream('statuses/filter', {track: '@Arbi_Swap'});
     stream.on('data', cb);
 }
 
