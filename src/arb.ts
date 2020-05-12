@@ -25,6 +25,14 @@ export const transfer = (to: string) => {
   return arbFaucetWallet.transfer(to)
 }
 
-export const resetFaucet() = (ethValue: ethers.utils.BigNumber, tokenValue: ethers.utils.BigNumber) => {
+export const resetFaucet = (ethValue: ethers.utils.BigNumber, tokenValue: ethers.utils.BigNumber) => {
 	return arbFaucetWallet.updateFaucet(env.tokenAddress, tokenValue, ethValue)
+}
+
+export const getAssertion = async (txHash: string): Promise<string | null> => {
+	let result = await arbProvider.getMessageResult(txHash)
+	if (!result) {
+		return null
+	}
+	return result.onChainTxHash
 }
