@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 
 //  simple dos guard
 let recipientHash = {}
-window.setInterval(()=>{
+setInterval(()=>{
     recipientHash = {}
 }, 1000 * 60 * 30)
 
