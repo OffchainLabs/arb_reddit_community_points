@@ -1,5 +1,5 @@
 import { startStream, reply } from './twitter'
-import { transfer, resetFaucet, getAssertion } from './arb'
+import { transfer, resetFaucet, getAssertion, getTokenBalance, getEthBalance, getWalletEthBalance, getWalletAddress, getFaucetAddress } from './arb'
 import { ethers } from 'ethers'
 
 
@@ -38,3 +38,25 @@ const extractAddress = (str: string): string=> {
 const isFaucetRequest = (tweetText): boolean=>{
     return tweetText.includes("gimmie") && tweetText.includes("tokens")
 }
+
+async function debugPrint() {
+    console.log("Wallet Address:", await getWalletAddress())
+    console.log("Wallet Eth Balance (For making txes):", ethers.utils.formatEther(await getWalletEthBalance()))
+    console.log()
+    console.log("Faucet Address:", getFaucetAddress())
+    console.log("Faucet Eth Balance:", ethers.utils.formatEther(await getEthBalance()))
+    console.log("Faucet Token Balance:", ethers.utils.formatEther(await getTokenBalance()))
+}
+
+async function send(address: string) {
+        const tx = await transfer(address)
+        const receipt = await tx.wait()
+        const { transactionHash } = receipt
+
+        const assertionTxHash = await getAssertion(transactionHash)
+        
+        console.log(`Funds sent! https://ropsten.etherscan.io/tx/${assertionTxHash}`)
+}
+
+// debugPrint()
+// send("0x9478B8296C576d99393Aa3c184d243A04c100CeF")
