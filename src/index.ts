@@ -36,7 +36,7 @@ const extractAddress = (str: string): string=> {
 }
 
 const isFaucetRequest = (tweetText): boolean=>{
-    return tweetText.includes("gimmie") && tweetText.includes("tokens")
+    return tweetText.includes("gimme") && tweetText.includes("tokens")
 }
 
 async function debugPrint() {
@@ -54,7 +54,7 @@ async function send(address: string) {
         const { transactionHash } = receipt
 
         const assertionTxHash = await getAssertion(transactionHash)
-        
+
         console.log(`Funds sent! https://ropsten.etherscan.io/tx/${assertionTxHash}`)
 }
 
