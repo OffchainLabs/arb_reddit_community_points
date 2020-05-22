@@ -2,6 +2,11 @@ import { startStream, reply } from './twitter'
 import { transfer, resetFaucet, getAssertion, getTokenBalance, getEthBalance, getWalletEthBalance, getWalletAddress, getFaucetAddress } from './arb'
 import { ethers } from 'ethers'
 
+//  simple dos guard
+let recipientHash = {}
+window.setInterval(()=>{
+    recipientHash = {}
+}, 1000 * 60 * 30)
 
 startStream( async (tweet)=> {
     console.info(tweet && `incoming tweet: ${tweet.text}`);
@@ -15,6 +20,14 @@ startStream( async (tweet)=> {
     if (!address){
         console.info('no address')
         return reply("Missing Address!", tweet)
+    }
+
+    const { id: userId }  = tweet.user;
+
+    if (recipientHash[userId]){
+        return reply(`Looks like you were recently sent some funds - slow down there!`, tweet)
+    } else {
+        recipientHash[userId] = true
     }
 
     const tx = await transfer(address)
