@@ -6,7 +6,10 @@ import { ethers } from 'ethers'
 startStream( async (tweet)=> {
     console.info(tweet && `incoming tweet: ${tweet.text}`);
 
-    if (!isFaucetRequest(tweet.text))return
+    if (!isFaucetRequest(tweet.text)){
+        console.info('not a faucet request')
+        return
+    }
 
     const address = extractAddress(tweet.text)
     if (!address){
@@ -19,11 +22,11 @@ startStream( async (tweet)=> {
     const { transactionHash } = receipt
 
     const assertionTxHash = await getAssertion(transactionHash)
-
+    console.info('transfer complete!')
     // TODO: transactionHash is the arbitrum transaction hash so the etherscan link wouldn't be valid
     // What would be good to put here? If we wanted we could get the transaction of the assertion that
     // processed the transfer or the hash of the message batch that included it
-    reply(`Funds sent! https://ropsten.etherscan.io/tx/${assertionTxHash}`, tweet)
+    reply(`Your funds have been sent, and are now available to use on the Arbiswap rollup chain! http://uniswap-demo.offchainlabs.com/`, tweet)
 
 
 })
@@ -36,7 +39,7 @@ const extractAddress = (str: string): string=> {
 }
 
 const isFaucetRequest = (tweetText): boolean=>{
-    return tweetText.includes("gimme") && tweetText.includes("tokens")
+    return tweetText.includes("gimmie") && tweetText.includes("tokens")
 }
 
 async function debugPrint() {
