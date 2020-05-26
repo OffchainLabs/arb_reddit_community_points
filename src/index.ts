@@ -26,8 +26,6 @@ startStream( async (tweet)=> {
 
     if (recipientHash[userId]){
         return reply(`Looks like you were recently sent some funds - slow down there!`, tweet)
-    } else {
-        recipientHash[userId] = true
     }
 
     const tx = await transfer(address)
@@ -35,6 +33,7 @@ startStream( async (tweet)=> {
     const { transactionHash } = receipt
 
     const assertionTxHash = await getAssertion(transactionHash)
+    recipientHash[userId] = true
     console.info('transfer complete!')
     // TODO: transactionHash is the arbitrum transaction hash so the etherscan link wouldn't be valid
     // What would be good to put here? If we wanted we could get the transaction of the assertion that
@@ -75,4 +74,4 @@ async function send(address: string) {
 }
 
 debugPrint()
-// send("0x9478B8296C576d99393Aa3c184d243A04c100CeF")
+// send("0x38299D74a169e68df4Da85Fb12c6Fd22246aDD9F")
