@@ -74,5 +74,5 @@ async function send(address: string) {
         console.log(`Funds sent! https://ropsten.etherscan.io/tx/${assertionTxHash}`)
 }
 
-// debugPrint()
+debugPrint()
 // send("0x9478B8296C576d99393Aa3c184d243A04c100CeF")
