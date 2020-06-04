@@ -51,7 +51,7 @@ const extractAddress = (str: string): string=> {
 }
 
 const isFaucetRequest = (tweetText): boolean=>{
-    return tweetText.includes("gimmie") && tweetText.includes("tokens")
+    return tweetText.includes("gimme") && tweetText.includes("tokens")
 }
 
 async function debugPrint() {
