@@ -28,7 +28,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "arb-provider-ethers": "^0.6.2",
+    "arb-provider-ethers": "^0.6.4",
     "dotenv": "^8.2.0",
     "ethers": "^4.0.47",
     "node-fetch": "^2.6.0",
