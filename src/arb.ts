@@ -60,5 +60,5 @@ export const getAssertion = async (txHash: string): Promise<string | null> => {
 	if (!result) {
 		return null
 	}
-	return result.onChainTxHash
+	return result.nodeInfo?.l1TxHash
 }

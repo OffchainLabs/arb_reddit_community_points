@@ -228,12 +228,11 @@ ansi-styles@^4.1.0:
     "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
 
-arb-provider-ethers@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/arb-provider-ethers/-/arb-provider-ethers-0.5.1.tgz#8e396276f50deda9e529c50e2cf9d004782d850a"
-  integrity sha512-XzCMMgSfLBGBdycN3KVJ2GNPoz8Hv4f3qTi5JoHXbvxqMBbdUCBpp2JK3JOulaVXMpNionFZgMh/o3MUyIHruw==
+arb-provider-ethers@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/arb-provider-ethers/-/arb-provider-ethers-0.6.1.tgz#6e9526dde9822ac80788d8279c51b6b77b0d0028"
+  integrity sha512-RR0l4sMVyGH2AO7Vimz0BBqKRg9n/W3TaNVY2imDHtIM16w9bzEQGarEkGrSLdINO9xXY+PXlmvbdnk1PtEV0Q==
   dependencies:
-    ethers "^4.0.47"
     jayson "^3.2.0"
     promise-poller "^1.9.1"
 

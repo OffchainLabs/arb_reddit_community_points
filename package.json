@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "start": "tsc && node dist/index.js",
     "get_token": "tsc && node dist/scripts/get_token.js",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
@@ -27,7 +28,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "arb-provider-ethers": "^0.5.1",
+    "arb-provider-ethers": "^0.6.1",
     "dotenv": "^8.2.0",
     "ethers": "^4.0.47",
     "node-fetch": "^2.6.0",
