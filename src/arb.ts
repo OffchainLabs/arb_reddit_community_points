@@ -52,7 +52,7 @@ export const getEthBalance = async (): Promise<ethers.utils.BigNumber> => {
 }
 
 export const getWalletEthBalance = async (): Promise<ethers.utils.BigNumber> => {
-	return arbProvider.getBalance(await arbWallet.getAddress())
+	return ethereumProvider.getBalance(await arbWallet.getAddress())
 }
 
 export const getAssertion = async (txHash: string): Promise<string | null> => {
