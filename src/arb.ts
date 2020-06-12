@@ -13,6 +13,7 @@ const arbProvider = new ArbProvider(
     env.arbProviderUrl,
     ethereumProvider,
     "http://104.248.7.183:1237"
+    true
   );
 
 const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
