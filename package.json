@@ -1,0 +1,23 @@
+{
+  "name": "arb-reddit-points",
+  "version": "0.2.0",
+  "author": "Offchain Labs, Inc.",
+  "license": "Apache-2.0",
+  "private": true,
+  "devDependencies": {
+    "arb-ethers-web3-bridge": "^0.7.0",
+    "arb-provider-ethers": "^0.6.5",
+    "ethers": "^4.0.44",
+    "file-loader": "^5.0.2",
+    "truffle": "^5.1.11"
+  },
+  "dependencies": {
+    "arb-provider-ethers": "^0.6.5",
+    "ethers": "4.0.44",
+    "node-fetch": "^2.6.0",
+    "web3": "~1.2.6"
+  },
+  "workspaces": {
+    "nohoist": []
+  }
+}
