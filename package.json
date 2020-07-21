@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "arb-provider-ethers": "^0.6.5",
-    "ethers": "4.0.44",
+    "ethers": "^4.0.44",
     "node-fetch": "^2.6.0",
     "web3": "~1.2.6"
   },
