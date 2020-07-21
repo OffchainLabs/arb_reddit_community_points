@@ -32,5 +32,17 @@ module.exports = {
           gasPrice: 0,
           networkCheckTimeout: 10000
       }
+  },
+  compilers: {
+    solc: {
+      version: "0.5.17",
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200
+        },
+        evmVersion: "petersburg"
+      }
+    }
   }
 };
