@@ -17,7 +17,7 @@ const arbProvider = new ArbProvider(
   );
 
 const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
-const arbWallet = new ArbWallet(ethereumWallet, arbProvider);
+export const arbWallet = new ArbWallet(ethereumWallet, arbProvider);
 const arbFaucetWallet = FaucetWalletFactory.connect(
   env.faucetWalletAddress,
   arbWallet

@@ -1,5 +1,5 @@
 {
-  "name": "arb-faucet",
+  "name": "arb-reddit-faucet",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
