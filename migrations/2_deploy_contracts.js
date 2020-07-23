@@ -12,11 +12,15 @@ module.exports = async function(deployer, network, accounts) {
 
   const dist = await Distributions_v0.deployed()
   await points.methods['initialize(address,address,address,string,string,string,address[])'](address,address,address,"Arbitrum", "ArbCommunityPoints", "ARBC",[]);
-  const res = await dist.methods['initialize(address,address,address,address,uint256,uint256,uint256,uint256,uint256,address[],uint256[])'](address, points.address, address, address, '2000000', '1000000', '2000000', '100', '5',[],[])
-
-
-
+  await dist.methods['initialize(address,address,address,address,uint256,uint256,uint256,uint256,uint256,address[],uint256[])'](address, points.address, address, address, '2000000', '1000000', '2000000', '100', '5',[],[])
   await points.updateDistributionContract(dist.address)
+
+  const symbol = await points.symbol.call()
+  console.log(' *** SubredditPoints_v0: symbol: *** ', symbol);
+
+  const  initSupply = await dist.initialSupply()
+  console.warn('*** Distributions_v0 initial supply ***', initSupply.toString());
+
 
   
 
