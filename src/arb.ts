@@ -57,7 +57,7 @@ export const getWalletEthBalance = async (): Promise<ethers.utils.BigNumber> => 
 }
 
 export const getAssertion = async (txHash: string): Promise<string | null> => {
-	let result = await arbProvider.getMessageResult(txHash)
+	const result = await arbProvider.getMessageResult(txHash)
 	if (!result) {
 		return null
 	}
