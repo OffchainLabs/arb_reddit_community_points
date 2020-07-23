@@ -1,28 +1,26 @@
 .App {
-  text-align: center;
+  background-color: rgb(223, 223, 223);
+
 }
 
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  margin-top: 60px;
 }
 
 .tweet-message {
   position: relative;
   box-sizing: border-box;
   padding: 1px 8px 1px 6px;
-  background-color: #1b95e0;
-  color: #fff;
+  background-color: #4abaff;
+  color: white;
   border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   font-family: Helvetica;
+  font-size: 16px;
 }

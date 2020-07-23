@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -14,9 +16,12 @@
     "arb-token-bridge": "^0.1.4",
     "bootstrap": "^4.5.0",
     "ethers": "^4.0.47",
+    "install": "^0.13.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.2.2",
     "react-dom": "^16.9.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "typescript": "~3.8"
   },
@@ -45,7 +50,10 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^4.5.0",
+    "@types/material-ui": "^0.21.7",
     "@types/react-bootstrap": "^1.0.1",
+    "@types/react-router": "^5.1.8",
+    "@types/react-router-dom": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
     "eslint-config-prettier": "^6.11.0",

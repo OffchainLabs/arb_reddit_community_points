@@ -7,7 +7,7 @@ const TweetButton = () => {
   };
   return (
     <a className="tweet-message" target="_blank" onClick={handleClick}>
-      Click here to Tweet
+      Click to claim to tokens via our twitter faucet
     </a>
   );
 };
