@@ -3,4 +3,5 @@ export default {
   distributionAddress:
     process.env.REACT_APP_DISTRIBUTION_CONTRACT_ADDRESS || "",
   tokenAddress: process.env.REACT_APP_TOKEN_CONTRACT_ADDRESS || "",
+  networkId: process.env.REACT_APP_NETWORK_ID,
 };

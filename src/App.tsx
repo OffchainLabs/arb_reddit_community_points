@@ -25,10 +25,11 @@ const { validatorUrl, distributionAddress, tokenAddress } = constants;
 if (!validatorUrl || !distributionAddress || !tokenAddress) {
   throw Error("Missing required env variable; see .env.sample");
 }
-
-function App() {
+interface AppProps {
+  ethProvider: ethers.providers.JsonRpcProvider;
+}
+function App({ ethProvider }: AppProps) {
   const { validatorUrl, distributionAddress, tokenAddress } = constants;
-
   if (!validatorUrl || !distributionAddress || !tokenAddress) {
     throw Error("Missing required env variable; see .env.sample");
   }
@@ -40,7 +41,7 @@ function App() {
     arbWallet,
     walletAddress,
     cache,
-  } = useArbTokenBridge(validatorUrl || "", getInjectedWeb3());
+  } = useArbTokenBridge(validatorUrl, ethProvider);
 
   // init contracts:
   const [PointsContract, DistributionContract] = useMemo(() => {
