@@ -7,25 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-
-{
-  /* <Button variant="contained">Default</Button> */
-}
-//
-
-const useStyles = makeStyles(() => ({
-  el: {
-    border: "1px solid black",
-    marginTop: "20px",
-    backgroundColor: "white",
-    color: "black",
-  },
-  root: {
-    display: "flex",
-    flexWrap: "wrap",
-    width: "30rem",
-  },
-}));
+import { useStyles } from "../themes/styles";
 
 interface ClaimProps {
   match: {
@@ -114,7 +96,7 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
     <div>
       <Grid container spacing={1} direction={"column"} alignItems={"center"}>
         <Grid className={classes.el} item xs={12} md={12} lg={12}>
-          <div className={classes.root}>
+          <div className={classes.claimRoot}>
             <TextField
               id="standard-full-width"
               label="Round Number"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ethers, Contract, utils } from "ethers";
 import { getInjectedWeb3 } from "../lib/web3";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,51 +21,9 @@ import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-
-const useStyles = makeStyles((theme) => {
-  console.warn("theme", theme);
-
-  return {
-    root: {
-      flexGrow: 1,
-      width: "100%",
-    },
-    paper: {
-      padding: theme.spacing(2),
-      textAlign: "left",
-      color: theme.palette.text.secondary,
-    },
-    bullet: {
-      display: "inline-block",
-      margin: "0 2px",
-      transform: "scale(0.8)",
-    },
-    title: {
-      fontSize: 14,
-    },
-    pos: {
-      marginBottom: 12,
-    },
-    demo: {
-      backgroundColor: theme.palette.background.paper,
-      color: "black",
-    },
-    list: {
-      width: "35rem",
-      marginTop: 15,
-      border: "1px solid black",
-    },
-  };
-});
-
-console.warn(
-  ethers.utils.keccak256(
-    ethers.utils.defaultAbiCoder.encode(
-      ["string", "string"],
-      ["Hello", "world"]
-    )
-  )
-);
+import TextField from "@material-ui/core/TextField";
+import { ClaimStatus } from "../lib/index";
+import { useStyles } from "../themes/styles";
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
 
@@ -76,45 +34,89 @@ interface props {
   tokenSymbol: string;
   tokenName: string;
   currentRound: number;
+  userCanClaim: ClaimStatus;
 }
 
 function App({ tokenSymbol, tokenName, currentRound }: props) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
+  const [addressValue, setAddressValue] = useState("");
+
+  const transfer = useCallback(
+    (e) => {
+      e.preventDefault();
+      console.log("transfering", addressValue);
+    },
+    [addressValue]
+  );
+
+  const addressError = useMemo(() => {
+    return !!(
+      addressValue &&
+      (!addressValue.startsWith("0x") || addressValue.length !== 42)
+    );
+  }, [addressValue]);
 
   return (
     <div>
       <div className={classes.root}>
-        <Grid container spacing={1} direction={"column"} alignItems={"center"}>
-          <Grid item xs={12} md={12} lg={12}>
+        <Grid
+          justify="center"
+          alignItems="center"
+          container
+          spacing={5}
+          direction={"row"}
+        >
+          <Grid item xs={4} md={4} lg={4}>
             <div className={classes.demo}>
-              <List className={classes.list} dense={true}>
-                <ListItem>
-                  <ListItemText primary="Your Tokens: 123" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText
-                    primary={`Distribution Round: ${currentRound}`}
-                  />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Next Round in: 234" />
-                </ListItem>
-              </List>
+              <Paper className={classes.paper}>
+                <List className={classes.list} dense={true}>
+                  <ListItem>
+                    <ListItemText primary="Your Tokens: 43" />
+                  </ListItem>
+                  <ListItem>
+                    <form noValidate autoComplete="off" onSubmit={transfer}>
+                      <TextField
+                        error={addressError}
+                        id="outlined-basic"
+                        label="Transfer"
+                        variant="outlined"
+                        placeholder="address"
+                        value={addressValue}
+                        onChange={(e) => setAddressValue(e.target.value)}
+                      />
+                    </form>
+                  </ListItem>
+                </List>
+              </Paper>
             </div>
           </Grid>
-          <Grid item xs={12} md={12} lg={12}>
+          <Grid item xs={4} md={4} lg={4}>
             <div className={classes.demo}>
-              <List className={classes.list} dense={true}>
-                <ListItem>You have 50 points to claim this round:</ListItem>
-                <ListItem>
-                  <Tweet />
-                </ListItem>
-              </List>
+              <Paper className={classes.paper}>
+                <List className={classes.list} dense={true}>
+                  <ListItem>
+                    <ListItemText
+                      primary={`Distribution Round: ${currentRound}`}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Next Round in: 234" />
+                  </ListItem>
+                </List>
+              </Paper>
             </div>
           </Grid>
-          <Grid item xs={12}>
-            <div> </div>
+        </Grid>
+        <Grid
+          justify="center"
+          alignItems="center"
+          container
+          spacing={5}
+          direction={"row"}
+        >
+          <Grid item>
+            <Tweet />
           </Grid>
         </Grid>
       </div>

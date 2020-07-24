@@ -5,3 +5,9 @@ export const secondsToRedableTime = (totalSeconds: number) => {
 
   return `${hours}:${minutes}:${seconds}`;
 };
+
+export enum ClaimStatus {
+  LOADING,
+  CLAIMABLE,
+  UNCLAIMABLE,
+}

@@ -11,6 +11,7 @@ import constants from "./lib/constants";
 import Main from "./components/Main";
 import Claim from "./components/Claim";
 import About from "./components/About";
+import { ClaimStatus } from "./lib/index";
 import {
   Redirect,
   Route,
@@ -18,12 +19,6 @@ import {
   HashRouter,
   BrowserRouter,
 } from "react-router-dom";
-
-enum ClaimStatus {
-  LOADING,
-  CLAIMABLE,
-  UNCLAIMABLE,
-}
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
 
@@ -115,6 +110,7 @@ function App() {
                     tokenSymbol={tokenSymbol}
                     tokenName={String(currentRound)}
                     currentRound={currentRound}
+                    userCanClaim={userCanClaim}
                   />
                 )}
                 exact
