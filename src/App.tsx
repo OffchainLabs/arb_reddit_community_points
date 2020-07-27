@@ -57,21 +57,22 @@ function App({ ethProvider }: AppProps) {
 
   useEffect(() => {
     if (!DistributionContract || !walletAddress) return;
-    const roundNum: utils.BigNumber = DistributionContract.lastRound().then(
-      (round: utils.BigNumber) => {
-        const lastRoundNum = +round.toString();
-        setCurrentRound(lastRoundNum);
-        DistributionContract.claimableRounds(walletAddress).then(
-          (lastClaimedRound: utils.BigNumber) => {
-            setUserCanClaim(
-              round.eq(lastClaimedRound)
-                ? ClaimStatus.UNCLAIMABLE
-                : ClaimStatus.CLAIMABLE
-            );
-          }
-        );
-      }
-    );
+    DistributionContract.lastRound().then((round: utils.BigNumber) => {
+      const lastRoundNum = +round.toString();
+      setCurrentRound(lastRoundNum);
+      DistributionContract.claimableRounds(walletAddress).then(
+        (lastClaimedRound: utils.BigNumber) => {
+          console.info("LAST CLAIMED ROUND", lastClaimedRound.toString());
+          console.info("Round", lastRoundNum.toString());
+
+          setUserCanClaim(
+            round.gt(lastClaimedRound)
+              ? ClaimStatus.UNCLAIMABLE
+              : ClaimStatus.CLAIMABLE
+          );
+        }
+      );
+    });
   }, [DistributionContract]);
 
   const [tokenSymbol, setTokenSymbol] = useState("");
@@ -97,43 +98,37 @@ function App({ ethProvider }: AppProps) {
       // token.add(tokenAddress, TokenType.ERC20);
     }
   }, [cache.erc20, walletAddress]);
+  console.info("tokenSymbol", tokenSymbol);
   return (
-    <div className="App">
-      <TopNavbar />
-      <main>
-        <header className="App-header">
-          <HashRouter>
-            <Switch>
-              <Route
-                path="/"
-                render={() => (
-                  <Main
-                    tokenSymbol={tokenSymbol}
-                    tokenName={String(currentRound)}
-                    currentRound={currentRound}
-                    userCanClaim={userCanClaim}
-                  />
-                )}
-                exact
-              />
-              <Route
-                path="/claim/:round/:address/:sig"
-                render={(props) => (
-                  <Claim
-                    currentRound={currentRound}
-                    walletAddress={walletAddress}
-                    claim={DistributionContract && DistributionContract.claim}
-                    {...props}
-                  />
-                )}
-                exact
-              />
-              <Route path="/about" component={About} exact />
-            </Switch>
-          </HashRouter>
-        </header>
-      </main>
-    </div>
+    <HashRouter>
+      <Switch>
+        <Route
+          path="/"
+          render={() => (
+            <Main
+              tokenSymbol={tokenSymbol}
+              tokenName={String(currentRound)}
+              currentRound={currentRound}
+              userCanClaim={userCanClaim}
+            />
+          )}
+          exact
+        />
+        <Route
+          path="/claim/:round/:address/:sig"
+          render={(props) => (
+            <Claim
+              currentRound={currentRound}
+              walletAddress={walletAddress}
+              claim={DistributionContract && DistributionContract.claim}
+              {...props}
+            />
+          )}
+          exact
+        />
+        <Route path="/about" component={About} exact />
+      </Switch>
+    </HashRouter>
   );
 }
 

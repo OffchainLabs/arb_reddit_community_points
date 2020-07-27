@@ -23,7 +23,6 @@ const Web3Injector  = () =>  {
     throw Error("Missing required env variable; see .env.sample");
   }
   const [ethProvider, setEthProvider] = useState(undefined, ethers.providers.JsonRpcProvider | Web3Error | undefined)
-
   useEffect(() => {
         getInjectedWeb3().then(setEthProvider)
   }, []);
@@ -32,13 +31,13 @@ const Web3Injector  = () =>  {
     if(ethProvider instanceof ethers.providers.JsonRpcProvider) {
             return <App ethProvider={ethProvider} />
     } else if (ethProvider ===  Web3Error.NO_CONNECTION) {
-            return (<Grid container  justify="center"
+            return (
+                <Grid container  justify="center"
             alignItems="center">
             <Alert severity="error">Ethereum provider not found; <a href="https://metamask.io/" target="_blank">install metamask</a> and try again</Alert>
 
             </Grid>)
     } else  if ( (ethProvider ===  Web3Error.BAD_NETWORK_ID)){
-
         return (<Grid container  justify="center"
         alignItems="center">
         <Alert severity="error">Please connect to {netoworkIdToName[networkId]} </Alert>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ethers, Contract, utils } from "ethers";
 import { getInjectedWeb3 } from "../lib/web3";
+import { secondsToReadableTime } from "../lib/index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TopNavbar from "./Navbar";
 import { abi as SubredditPoints_v0 } from "../abis/SubredditPoints_v0.json";
@@ -27,9 +28,6 @@ import { useStyles } from "../themes/styles";
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
 
-if (!validatorUrl || !distributionAddress || !tokenAddress) {
-  throw Error("Missing required env variable; see .env.sample");
-}
 interface props {
   tokenSymbol: string;
   tokenName: string;
@@ -37,11 +35,25 @@ interface props {
   userCanClaim: ClaimStatus;
 }
 
-function App({ tokenSymbol, tokenName, currentRound }: props) {
+function App({ tokenSymbol, tokenName, currentRound, userCanClaim }: props) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
   const [addressValue, setAddressValue] = useState("");
+  const [timeRemaining, setTimeRemaining] = useState(900002);
 
+  const updateTimeRemaining = useCallback(() => {
+    setTimeRemaining((lastTimeRemaiing) => {
+      return lastTimeRemaiing - 1;
+    });
+  }, [setTimeRemaining, timeRemaining]);
+
+  useEffect(() => {
+    window.setInterval(() => {
+      setTimeRemaining((lastTimeRemaiing) => {
+        return lastTimeRemaiing - 1;
+      });
+    }, 1000);
+  }, []);
   const transfer = useCallback(
     (e) => {
       e.preventDefault();
@@ -101,7 +113,11 @@ function App({ tokenSymbol, tokenName, currentRound }: props) {
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Next Round in: 234" />
+                    <ListItemText
+                      primary={`Next Round in: ${secondsToReadableTime(
+                        timeRemaining
+                      )}`}
+                    />
                   </ListItem>
                 </List>
               </Paper>
@@ -116,7 +132,7 @@ function App({ tokenSymbol, tokenName, currentRound }: props) {
           direction={"row"}
         >
           <Grid item>
-            <Tweet />
+            <Tweet userCanClaim={userCanClaim} />
           </Grid>
         </Grid>
       </div>

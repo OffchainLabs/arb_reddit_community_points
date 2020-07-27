@@ -8,6 +8,9 @@ import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import { useStyles } from "../themes/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Paper from "@material-ui/core/Paper";
+import Alert from "@material-ui/lab/Alert";
 
 interface ClaimProps {
   match: {
@@ -65,25 +68,40 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   }, [walletAddress]);
 
   const claimCoins = useCallback(() => {
-    if (!claim) return;
+    if (!claim || readyState !== ReadyState.Valid) return;
     // TODO: karma constant
     claim(round, address, 20, sig);
-  }, [claim]);
+  }, [claim, readyState]);
 
   const render = (readyState: ReadyState) => {
     switch (readyState) {
       case ReadyState.InvalidAddress:
-        return `Wrong address; make sure you're logged in with ${address}`;
+        return (
+          <Alert severity="error">{`Wrong address; make sure you're logged in with ${address}`}</Alert>
+        );
+
       case ReadyState.InvalidRound:
-        return "Looks like this round has already passed!";
+        return (
+          <Alert severity="error">
+            Looks like this round has already passed!
+          </Alert>
+        );
+
       case ReadyState.InvalidSignature:
-        return "Invalid signaure, try again.";
+        return <Alert severity="error">Invalid signaure</Alert>;
+
       case ReadyState.Waiting:
-        return "loading...";
+        return (
+          <Button onClick={claimCoins}>
+            <CircularProgress />
+          </Button>
+        );
       case ReadyState.Valid:
         return (
           <div>
-            Claim your points <Button onClick={claimCoins}>Claim</Button>
+            <Button color="primary" variant="contained" onClick={claimCoins}>
+              Claim your points!
+            </Button>
           </div>
         );
 
@@ -95,49 +113,51 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   return (
     <div>
       <Grid container spacing={1} direction={"column"} alignItems={"center"}>
-        <Grid className={classes.el} item xs={12} md={12} lg={12}>
-          <div className={classes.claimRoot}>
-            <TextField
-              id="standard-full-width"
-              label="Round Number"
-              style={{ margin: 8 }}
-              placeholder="Placeholder"
-              fullWidth
-              margin="normal"
-              disabled
-              value={round}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              id="standard-full-width"
-              label="Address"
-              style={{ margin: 8 }}
-              fullWidth
-              margin="normal"
-              disabled
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={address}
-            />
-            <TextField
-              id="standard-full-width"
-              label="Signature"
-              style={{ margin: 8 }}
-              fullWidth
-              disabled
-              value={sig}
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+        <Grid item xs={12} md={12} lg={12}>
+          <div className={classes.demo}>
+            <Paper className={classes.paper}>
+              <TextField
+                id="standard-full-width"
+                label="Round Number"
+                style={{ margin: 8 }}
+                placeholder="Placeholder"
+                fullWidth
+                margin="normal"
+                disabled
+                value={round}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                id="standard-full-width"
+                label="Address"
+                style={{ margin: 8 }}
+                fullWidth
+                margin="normal"
+                disabled
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={address}
+              />
+              <TextField
+                id="standard-full-width"
+                label="Signature"
+                style={{ margin: 8 }}
+                fullWidth
+                disabled
+                value={sig}
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Paper>
           </div>
         </Grid>
-        <Grid className={classes.el} item xs={12} md={12} lg={12}>
-          {render(readyState)}
+        <Grid item xs={12} md={12} lg={12}>
+          <Paper className={classes.demo}>{render(readyState)}</Paper>
         </Grid>
       </Grid>
     </div>
