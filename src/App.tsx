@@ -18,7 +18,8 @@ import {
   HashRouter,
   BrowserRouter,
 } from "react-router-dom";
-import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
+// import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
+import WelcomeModal from "./components/Modal"
 
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
@@ -60,6 +61,7 @@ function App({ ethProvider }: AppProps) {
 
   const [currentRound, setCurrentRound] = useState(0);
   const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
+  const [displayWelcome, setDisplayWelcome] = useState(true)
 
   useEffect(() => {
     if (!DistributionContract || !walletAddress) return;
@@ -108,6 +110,8 @@ function App({ ethProvider }: AppProps) {
   }, [PointsContract])
 
   return (
+    <>
+    <WelcomeModal displayModal={displayWelcome} setDisplayModal={setDisplayWelcome} />
     <HashRouter>
       <Switch>
         <Route
@@ -139,6 +143,7 @@ function App({ ethProvider }: AppProps) {
         <Route path="/about" component={About} exact />
       </Switch>
     </HashRouter>
+    </>
   );
 }
 
