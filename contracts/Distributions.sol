@@ -50,7 +50,7 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
     // maps round number to round data
     mapping(uint256 => DistributionRound) private _distributionRounds;
     // maps account to next claimable round
-    mapping(address => uint256) private _claimableRounds;
+    mapping(address => uint256) public claimableRounds;
 
     // when sharing percentage, the least possible share is 1/percentPrecision
     uint256 public constant PERCENT_PRECISION = 1000000;
@@ -134,7 +134,7 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
 
     function claim(uint256 round, address account, uint256 karma, bytes calldata signature) external {
         require(karma > 0, "Distributions: karma should be > 0");
-        require(_claimableRounds[account] <= round, "Distributions: this rounds points are already claimed");
+        require(claimableRounds[account] <= round, "Distributions: this rounds points are already claimed");
         require(round <= lastRound, "Distributions: too early to claim this round");
         uint256 mc = minClaimableRound();
         require(round >= mc, "Distributions: too late to claim this round");
@@ -151,7 +151,7 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
             .div(dr.totalKarma);
         require(userPoints > 0, "Distributions: user karma is too low to claim points");
         _prevClaimed = _prevClaimed.add(userPoints);
-        _claimableRounds[account] = round.add(1);
+        claimableRounds[account] = round.add(1);
         emit ClaimPoints(round, account, karma, userPoints);
         ISubredditPoints(subredditPoints).mint(address(this), account, userPoints, "", "");
     }
