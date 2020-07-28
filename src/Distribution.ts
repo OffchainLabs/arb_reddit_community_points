@@ -1,6 +1,5 @@
 import * as fetch from "node-fetch";
 import { ethers, Contract, utils } from 'ethers'
-import { ArbProvider, ArbWallet } from 'arb-provider-ethers'
 import env from './constants'
 import { abi as Distributions_v0 } from "./abis/Distributions_v0.json";
 
@@ -10,24 +9,26 @@ import { abi as Distributions_v0 } from "./abis/Distributions_v0.json";
 const karmaConstant = new utils.BigNumber(20)
 const subredditLowerCase = "arbreddit"
 const rootUrl = "https://www.qqq.com#claim/"
+console.warn('?');
 
 const ethereumProvider = new ethers.providers.JsonRpcProvider(env.ethProviderUrl)
 
-const arbProvider = new ArbProvider(
-    env.arbProviderUrl,
-    ethereumProvider,
-    "http://104.248.7.183:1237",
-    true
-  );
 
-const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
-export const arbWallet = new ArbWallet(ethereumWallet, arbProvider);
 
-const DistributionsContract = new Contract('0xabc', Distributions_v0, arbWallet)
+// const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
+const mnemonic =
+'surge ability together fruit retire harvest release turkey social coffee owner uphold panel group car'
 
-const getLastRound = async (): Promise<utils.BigNumber> =>{
+// const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
+const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic)
+
+export const arbWallet  = ethereumWallet.connect(ethereumProvider)
+
+
+const DistributionsContract = new Contract(env.distributionAddress, Distributions_v0, arbWallet)
+
+export const getLastRound = async (): Promise<utils.BigNumber> =>{
     return await DistributionsContract.lastRound()
-
 }
 
 const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
@@ -37,8 +38,9 @@ const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
 
 export const advanceRound = async () => {
     const currentRound = await getLastRound();
-    await DistributionsContract.advanceToRound( currentRound.add(1), karmaConstant)
 
+    const res = await DistributionsContract.advanceToRound( currentRound.add(1), karmaConstant)
+    res.wait()
 }
 
 
@@ -60,4 +62,3 @@ export const generateResponse = async (address: string)=>{
     return `Request approved! Click here to claim your coins: ${rootUrl}${lastRound}/${address}/${sig}`
 
 }
-

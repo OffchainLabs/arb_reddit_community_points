@@ -17,9 +17,7 @@ startStream( async (tweet)=> {
         return reply("Missing Address!", tweet)
     }
 
-    const { id: userId }  = tweet.user;
 
- 
     const response = await generateResponse(address)
 
 
@@ -38,25 +36,3 @@ const extractAddress = (str: string): string=> {
 const isFaucetRequest = (tweetText): boolean=>{
     return tweetText.includes("gimme") && tweetText.includes("tokens")
 }
-
-// async function debugPrint() {
-//     console.log("Wallet Address:", await getWalletAddress())
-//     console.log("Wallet Eth Balance (For making txes):", ethers.utils.formatEther(await getWalletEthBalance()))
-//     console.log()
-//     console.log("Faucet Address:", getFaucetAddress())
-//     console.log("Faucet Eth Balance:", ethers.utils.formatEther(await getEthBalance()))
-//     console.log("Faucet Token Balance:", ethers.utils.formatEther(await getTokenBalance()))
-// }
-
-// async function send(address: string) {
-//         const tx = await transfer(address)
-//         const receipt = await tx.wait()
-//         const { transactionHash } = receipt
-
-//         const assertionTxHash = await getAssertion(transactionHash)
-
-//         console.log(`Funds sent! https://ropsten.etherscan.io/tx/${assertionTxHash}`)
-// }
-
-// debugPrint()
-// send("0x38299D74a169e68df4Da85Fb12c6Fd22246aDD9F")
