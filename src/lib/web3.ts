@@ -45,11 +45,11 @@ export async function getInjectedWeb3(): Promise<
         window.location.reload();
       });
 
-    if (window.ethereum.networkVersion !== networkId) {
-      return Web3Error.BAD_NETWORK_ID;
-    }
+    // if (window.ethereum.networkVersion !== networkId) {
+    //   return Web3Error.BAD_NETWORK_ID;
+    // }
 
-    return new ethers.providers.Web3Provider(window.ethereum, +networkId);
+    return new ethers.providers.Web3Provider(window.ethereum);
   }
 
   return Web3Error.NO_CONNECTION;

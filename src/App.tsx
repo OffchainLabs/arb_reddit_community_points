@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./App.css";
-import { useArbTokenBridge, TokenType } from "arb-token-bridge";
 import { ethers, Contract, utils } from "ethers";
 import { getInjectedWeb3 } from "./lib/web3";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,6 +18,8 @@ import {
   HashRouter,
   BrowserRouter,
 } from "react-router-dom";
+import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
+
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
 
@@ -34,23 +35,28 @@ function App({ ethProvider }: AppProps) {
     throw Error("Missing required env variable; see .env.sample");
   }
 
-  const {
-    balances,
-    bridgeTokens,
-    token,
-    arbWallet,
-    walletAddress,
-    cache,
-  } = useArbTokenBridge(validatorUrl, ethProvider);
 
-  // init contracts:
-  const [PointsContract, DistributionContract] = useMemo(() => {
-    if (!arbWallet) return [];
-    return [
-      new Contract(tokenAddress, SubredditPoints_v0, arbWallet),
-      new Contract(distributionAddress, Distributions_v0, arbWallet),
-    ];
-  }, [arbWallet]);
+
+
+  const [PointsContract, DistributionContract, wallet] = useMemo(() => {
+      if (!ethProvider) return [];
+      const wallet = ethProvider.getSigner(0)
+
+
+      return [
+        new Contract(tokenAddress, SubredditPoints_v0, wallet),
+        new Contract(distributionAddress, Distributions_v0, wallet),
+        wallet
+      ];
+    }, [ethProvider]);
+
+    const [walletAddress, setWalletAddress] = useState("")
+    useEffect(()=>{
+
+      wallet && wallet.getAddress().then(setWalletAddress)
+    },[wallet])
+
+
 
   const [currentRound, setCurrentRound] = useState(0);
   const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
@@ -63,17 +69,17 @@ function App({ ethProvider }: AppProps) {
       DistributionContract.claimableRounds(walletAddress).then(
         (lastClaimedRound: utils.BigNumber) => {
           console.info("LAST CLAIMED ROUND", lastClaimedRound.toString());
-          console.info("Round", lastRoundNum.toString());
+          console.info("Last Round", lastRoundNum.toString());
 
           setUserCanClaim(
-            round.gt(lastClaimedRound)
-              ? ClaimStatus.UNCLAIMABLE
-              : ClaimStatus.CLAIMABLE
+            round.gte(lastClaimedRound)
+              ? ClaimStatus.CLAIMABLE
+              : ClaimStatus.UNCLAIMABLE
           );
         }
-      );
+      )
     });
-  }, [DistributionContract]);
+  }, [DistributionContract,walletAddress]);
 
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [tokenName, setTokenName] = useState("");
@@ -84,21 +90,23 @@ function App({ ethProvider }: AppProps) {
     }
     if (DistributionContract && !tokenName) {
       DistributionContract.initialSupply().then((d: utils.BigNumber) => {
-        console.warn("init supply", d.toString());
-
         setTokenName(d.toString());
       });
     }
   }, [PointsContract, DistributionContract, tokenSymbol]);
 
-  useEffect(() => {
-    if (!walletAddress) return;
+  const [tokenBalance, setTokenBalance] = useState(0)
+  const updateTokenBalance = useCallback(()=>{
+    if(!PointsContract || !walletAddress)return
+    PointsContract.balanceOf(walletAddress).then((bal:any)=> setTokenBalance(bal.toNumber()))
+  }, [PointsContract, walletAddress])
+    // TODO polling update
+  useEffect(updateTokenBalance, [PointsContract, walletAddress])
 
-    if (!cache.erc20.includes(tokenAddress)) {
-      // token.add(tokenAddress, TokenType.ERC20);
-    }
-  }, [cache.erc20, walletAddress]);
-  console.info("tokenSymbol", tokenSymbol);
+  const transferToken = useCallback((account: string, value: number)=>{
+    PointsContract && PointsContract.transfer(account, value)
+  }, [PointsContract])
+
   return (
     <HashRouter>
       <Switch>
@@ -110,6 +118,8 @@ function App({ ethProvider }: AppProps) {
               tokenName={String(currentRound)}
               currentRound={currentRound}
               userCanClaim={userCanClaim}
+              tokenBalance={tokenBalance}
+              transferToken={transferToken}
             />
           )}
           exact
