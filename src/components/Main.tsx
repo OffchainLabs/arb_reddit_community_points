@@ -148,7 +148,7 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
       e.preventDefault();
 
       const txReceipt = await transferToken(addressValue, Number(amountValue))
-      setTxHash(txReceipt.hash)
+      if(txReceipt) setTxHash(txReceipt.hash)
     },
     [addressValue, amountValue]
   );

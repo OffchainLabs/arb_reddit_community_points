@@ -104,7 +104,9 @@ function App({ ethProvider }: AppProps) {
 
   const transferToken = useCallback(async (account: string, value: number)=>{
     if(PointsContract) {
-      return await PointsContract.transfer(account, value)
+      const txReceipt = await PointsContract.transfer(account, value)
+        .catch((e: any) => alert("Error: " + e.message));
+      return txReceipt;
     }
   }, [PointsContract])
 
