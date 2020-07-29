@@ -6,18 +6,18 @@ import { Typography, Button, makeStyles } from "@material-ui/core";
 const useStyle = makeStyles((theme) => {
   return {
     tweetMessage: {
-      position: "relative",
-      boxSizing: "border-box",
+      // position: "relative",
+      // boxSizing: "border-box",
       // padding: "1px 8px 1px 6px",
-      backgroundColor: "#4abaff",
-      color: "white",
-      borderRadius: "3px",
+      // backgroundColor: "#4abaff",
+      // color: "white",
+      // borderRadius: "3px",
       // fontWeight: "500",
-      cursor: "pointer",
-      textDecoration: "none",
-      fontFamily: "Helvetica",
+      // cursor: "pointer",
+      // textDecoration: "none",
+      // fontFamily: "Helvetica",
       fontSize: "16px",
-      padding: "20px",
+      // padding: "20px",
     },
   };
 });
@@ -41,15 +41,15 @@ const TweetButton = ({ userCanClaim }: tweetProps) => {
       case ClaimStatus.UNCLAIMABLE:
         return "Looks like you already claimed your funds this round";
       case ClaimStatus.CLAIMABLE:
-        return "Click to claim to tokens via our twitter faucet";
+        return "Claim tokens via twitter faucet";
     }
   }, [userCanClaim]);
   return userCanClaim === ClaimStatus.LOADING ? (
     <CircularProgress />
   ) : (
-    <Typography className={classes.tweetMessage} onClick={handleClick}>
+    <Button color="primary" variant="contained" onClick={handleClick} className={classes.tweetMessage}>
       {message}
-    </Typography>
+    </Button>
   );
 };
 

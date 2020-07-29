@@ -104,8 +104,12 @@ function App({ ethProvider }: AppProps) {
     // TODO polling update
   useEffect(updateTokenBalance, [PointsContract, walletAddress])
 
-  const transferToken = useCallback((account: string, value: number)=>{
-    PointsContract && PointsContract.transfer(account, value)
+  const transferToken = useCallback(async (account: string, value: number)=>{
+    if(PointsContract) {
+      const result = await PointsContract.transfer(account, value)
+      console.log(result)
+      return result
+    }
   }, [PointsContract])
 
   return (

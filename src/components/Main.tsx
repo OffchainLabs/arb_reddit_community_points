@@ -106,7 +106,7 @@ const UserTokens = (props: any) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button onClick={props.transfer}>Submit</Button>
+              <Button color="primary" onClick={props.transfer}>Submit</Button>
             </Grid>
           </Grid>
           {/* </form> */}

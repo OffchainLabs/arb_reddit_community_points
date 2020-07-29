@@ -105,9 +105,9 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
 
       case ReadyState.Waiting:
         return (
-          <Button onClick={claimCoins}>
+          // <Button onClick={claimCoins}>
             <CircularProgress />
-          </Button>
+          // </Button>
         );
       case ReadyState.Valid:
         return (
