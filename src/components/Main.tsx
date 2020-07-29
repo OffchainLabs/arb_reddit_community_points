@@ -162,7 +162,11 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
       container
       spacing={5}
       direction="row"
-      style={{padding: 30}}
+      style={{
+        padding: 30,
+        margin: 0,
+        width: '100%',
+      }}
       component="div"
       alignItems="center"
       justify="center"

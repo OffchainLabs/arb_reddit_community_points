@@ -122,7 +122,16 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   };
 
   return (
-    <Grid container spacing={4} direction="column" alignItems="center">
+    <Grid
+      container
+      spacing={4}
+      direction="column"
+      alignItems="center"
+      style={{
+        margin: 0,
+        width: '100%',
+      }}
+    >
       <Grid item />
       <Grid item component={Paper} className={classes.paper}>
           <List className={classes.list}>
