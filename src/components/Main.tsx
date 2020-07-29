@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => {
     paper: {
       textAlign: "left",
       color: theme.palette.text.secondary,
-      minHeight: "13rem",
+      minHeight: "17rem",
       minWidth: "25rem",
       width: "100%",
       height: "100%"
@@ -40,7 +40,7 @@ interface props {
   currentRound: number;
   userCanClaim: ClaimStatus;
   tokenBalance: number;
-  transferToken: (account: string, value: number) => void;
+  transferToken: (account: string, value: number) => any;
 }
 
 const Distribution = (props: any) => {
@@ -106,7 +106,12 @@ const UserTokens = (props: any) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button color="primary" onClick={props.transfer}>Submit</Button>
+              { props.txHash && (
+                <Typography noWrap >Success.<br/>Transaction hash: {props.txHash}</Typography>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <Button color="primary" onClick={props.transfer} >Submit</Button>
             </Grid>
           </Grid>
           {/* </form> */}
@@ -121,6 +126,7 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
   // const bull = <span className={classes.bullet}>•</span>;
   const [addressValue, setAddressValue] = useState("");
   const [amountValue, setAmountValue] = useState("");
+  const [txHash, setTxHash] = useState(null);
 
   const [timeRemaining, setTimeRemaining] = useState(9000);
 
@@ -138,10 +144,11 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
     }, 1000);
   }, []);
   const transfer = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
 
-      transferToken(addressValue, Number(amountValue))
+      const txReceipt = await transferToken(addressValue, Number(amountValue))
+      setTxHash(txReceipt.hash)
     },
     [addressValue, amountValue]
   );
@@ -181,7 +188,8 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
             valueError,
             amountValue,
             setAmountValue,
-            setAddressValue
+            setAddressValue,
+            txHash
           }} />
       </Grid>
       <Grid item xs={12} md={6}>
