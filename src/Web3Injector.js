@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import "./App.css";
 import { getInjectedWeb3, Web3Error, netoworkIdToName } from "./lib/web3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TopNavbar from "./components/Navbar";
@@ -51,14 +50,10 @@ const Web3Injector  = () =>  {
     }
     }, [ethProvider])
   return (
-    <div className="App">
+    <>
       <TopNavbar />
-      <main>
-        <header className="App-header">
-        {renderedContent}
-        </header>
-      </main>
-    </div>
+      {renderedContent}
+    </>
   );
 }
 

@@ -1,9 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import Web3Injector from "./Web3Injector";
 import * as serviceWorker from "./serviceWorker";
-import "./App.css";
 
 ReactDOM.render(
   <React.StrictMode>

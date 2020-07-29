@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import "./App.css";
 import { ethers, Contract, utils } from "ethers";
 import { getInjectedWeb3 } from "./lib/web3";
 import "bootstrap/dist/css/bootstrap.min.css";
