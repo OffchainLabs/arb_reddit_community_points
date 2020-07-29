@@ -10,18 +10,3 @@
   color: white;
   margin-top: 60px;
 }
-
-.tweet-message {
-  position: relative;
-  box-sizing: border-box;
-  padding: 1px 8px 1px 6px;
-  background-color: #4abaff;
-  color: white;
-  border-radius: 3px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  font-family: Helvetica;
-  font-size: 16px;
-  padding: 20px;
-}

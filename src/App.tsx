@@ -61,7 +61,7 @@ function App({ ethProvider }: AppProps) {
 
   const [currentRound, setCurrentRound] = useState(0);
   const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
-  const [displayWelcome, setDisplayWelcome] = useState(true)
+  const [displayWelcome, setDisplayWelcome] = useState(false)
 
   useEffect(() => {
     if (!DistributionContract || !walletAddress) return;
