@@ -111,12 +111,13 @@ function App({ ethProvider }: AppProps) {
 
   return (
     <>
-    <WelcomeModal displayModal={displayWelcome} setDisplayModal={setDisplayWelcome} />
     <HashRouter>
       <Switch>
         <Route
           path="/"
           render={() => (
+            <>
+            <WelcomeModal displayModal={displayWelcome} setDisplayModal={setDisplayWelcome} />
             <Main
               tokenSymbol={tokenSymbol}
               tokenName={String(currentRound)}
@@ -125,6 +126,7 @@ function App({ ethProvider }: AppProps) {
               tokenBalance={tokenBalance}
               transferToken={transferToken}
             />
+            </>
           )}
           exact
         />
