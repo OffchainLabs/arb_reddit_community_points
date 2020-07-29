@@ -57,20 +57,19 @@ const DialogActions = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogActions);
 
-interface props {
-    displayModal: boolean,
-    setDisplayModal: (value: boolean) => void;
-  }
 
-export default function WelcomeModal({displayModal, setDisplayModal}: props) {
+
+export default function WelcomeModal() {
+  const [displayWelcome, setDisplayWelcome] = React.useState(true)
+
   const handleClose = () => {
-    setDisplayModal(false);
+    setDisplayWelcome(false);
   };
 
   return (
     <div>
 
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={displayModal}>
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={displayWelcome}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           Welcome to Arb Community Points
         </DialogTitle>

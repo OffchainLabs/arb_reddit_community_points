@@ -18,7 +18,6 @@ import {
   BrowserRouter,
 } from "react-router-dom";
 // import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
-import WelcomeModal from "./components/Modal"
 
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
@@ -60,7 +59,6 @@ function App({ ethProvider }: AppProps) {
 
   const [currentRound, setCurrentRound] = useState(0);
   const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
-  const [displayWelcome, setDisplayWelcome] = useState(false)
 
   useEffect(() => {
     if (!DistributionContract || !walletAddress) return;
@@ -117,7 +115,6 @@ function App({ ethProvider }: AppProps) {
           path="/"
           render={() => (
             <>
-            <WelcomeModal displayModal={displayWelcome} setDisplayModal={setDisplayWelcome} />
             <Main
               tokenSymbol={tokenSymbol}
               tokenName={String(currentRound)}
