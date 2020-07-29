@@ -41,6 +41,7 @@ interface props {
   userCanClaim: ClaimStatus;
   tokenBalance: number;
   transferToken: (account: string, value: number) => any;
+  setTokenBalance: (value: number | ((prevVar: number) => number)) => void;
 }
 
 const Distribution = (props: any) => {
@@ -88,7 +89,7 @@ const UserTokens = (props: any) => {
                 placeholder="Address"
                 value={props.addressValue}
                 onChange={(e) => props.setAddressValue(e.target.value)}
-                disabled={props.tokenBalance !== 0}
+                disabled={props.tokenBalance === 0}
                 fullWidth
               />
             </Grid>
@@ -101,7 +102,7 @@ const UserTokens = (props: any) => {
                 placeholder="Amount"
                 value={props.amountValue}
                 onChange={(e) => props.setAmountValue(e.target.value)}
-                disabled={props.tokenBalance !== 0}
+                disabled={props.tokenBalance === 0}
                 fullWidth
               />
             </Grid>
@@ -121,7 +122,7 @@ const UserTokens = (props: any) => {
   );
 };
 
-function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, transferToken }: props) {
+function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, transferToken, setTokenBalance }: props) {
   const classes = useStyles();
   // const bull = <span className={classes.bullet}>•</span>;
   const [addressValue, setAddressValue] = useState("");
@@ -148,7 +149,10 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
       e.preventDefault();
 
       const txReceipt = await transferToken(addressValue, Number(amountValue))
-      if(txReceipt) setTxHash(txReceipt.hash)
+      if(txReceipt) {
+        setTxHash(txReceipt.hash)
+        setTokenBalance(balance => balance - Number(amountValue))
+      }
     },
     [addressValue, amountValue]
   );

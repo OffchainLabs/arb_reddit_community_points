@@ -123,6 +123,7 @@ function App({ ethProvider }: AppProps) {
               currentRound={currentRound}
               userCanClaim={userCanClaim}
               tokenBalance={tokenBalance}
+              setTokenBalance={setTokenBalance}
               transferToken={transferToken}
             />
             </>
