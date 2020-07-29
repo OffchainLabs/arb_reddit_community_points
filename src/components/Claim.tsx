@@ -124,8 +124,7 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   return (
     <Grid container spacing={1} direction="column" alignItems="center">
       <Grid item />
-      <Grid item>
-        <Paper className={classes.paper}>
+      <Grid item component={Paper} className={classes.paper}>
           <List className={classes.list}>
             <ListItem>
               <TextField
@@ -176,7 +175,6 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
               />
             </ListItem>
           </List>
-        </Paper>
       </Grid>
       <Grid item>{render(readyState)}</Grid>
     </Grid>
