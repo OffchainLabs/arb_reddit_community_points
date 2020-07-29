@@ -110,7 +110,6 @@ function App({ ethProvider }: AppProps) {
   }, [PointsContract])
 
   return (
-    <>
     <HashRouter>
       <Switch>
         <Route
@@ -145,7 +144,6 @@ function App({ ethProvider }: AppProps) {
         <Route path="/about" component={About} exact />
       </Switch>
     </HashRouter>
-    </>
   );
 }
 
