@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { getInjectedWeb3, Web3Error, netoworkIdToName } from "./lib/web3";
+
+import WelcomeModal from "./components/Modal/index.jsx"
+import { useLocalStorage } from '@rehooks/local-storage'
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import TopNavbar from "./components/Navbar";
 import constants from "./lib/constants";
@@ -17,6 +21,7 @@ if (!validatorUrl || !distributionAddress || !tokenAddress) {
 }
 
 const Web3Injector  = () =>  {
+  const [shouldOpenModalCache, setShouldOpenModalCache] = useLocalStorage('welcomeModal', false)
   const { validatorUrl, distributionAddress, tokenAddress, networkId } = constants;
   if (!validatorUrl || !distributionAddress || !tokenAddress || networkId === undefined) {
     throw Error("Missing required env variable; see .env.sample");
@@ -51,6 +56,7 @@ const Web3Injector  = () =>  {
     }, [ethProvider])
   return (
     <>
+      <WelcomeModal shouldOpenModalCache={shouldOpenModalCache} setShouldOpenModalCache={setShouldOpenModalCache} />
       <TopNavbar />
       {renderedContent}
     </>
