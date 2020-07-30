@@ -20,11 +20,6 @@ module.exports = async function(deployer, network, accounts) {
 
   const  initSupply = await dist.initialSupply()
   console.info('*** Distributions_v0 initial supply ***', initSupply.toString());
-
-  // await dist.backDoorMint("0xd16B854B4f2317f0161A662B40c3ccFe3bDBf59c")
-  // console.info("done minting")
-
   
-
 
 };
