@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import Carousel from 'react-elastic-carousel'
 import ImageSlide from './ImageSlide'
 import WrongNetworkGif from '../../assets/gifs/wrong-network.gif'
-import DespositGif from '../../assets/gifs/deposit.gif'
+import TransferGif from '../../assets/gifs/transfer.gif'
 import Withdraw from '../../assets/gifs/withdraw.gif'
 import ActionsGif from '../../assets/gifs/actions.gif'
 import TwitterImage from '../../assets/images/twitter-share.png'
@@ -69,10 +69,10 @@ function WelcomeCarousel() {
         text={
           <span>
             {' '}
-            Welcome to Arbiswap, a layer 2 implementation of the Uniswap Exchange using Arbitrum rollup technology!
+            Welcome to Arb Community Points, a layer 2 implementation of Reddit Community Points using Arbitrum rollup technology!
             <br />
             <br />
-            Once you get some funds on the rollup chain, you can use it just like you would layer 1 Uniswap.
+            Once you get some funds on the rollup chain, you can use it just like you would layer 1 points.
             <br />
             <br />
             Let’s get started!
@@ -84,11 +84,14 @@ function WelcomeCarousel() {
       <ImageSlide
         text={
           <span>
-            First, make sure you have,{' '}
+            First, make sure you have{' '}
             <Link target="_blank" href="https://metamask.io/download.html">
-              MetaMask installed,
+              MetaMask installed
             </Link>{' '}
-            and that you are connected to the Ropsten test network.
+            and that you are connected to the Arbitrum network.
+            <br/>
+            <br/>
+            For that, you will need to add an Arbitrum RPC provider to Metamask.
           </span>
         }
         imageUrl={WrongNetworkGif}
@@ -96,17 +99,17 @@ function WelcomeCarousel() {
       <ImageSlide
         text={
           <span>
-            Now you’ll need to get some funds onto our rollup sidechain. If you already have Ropsten ETH or any Ropsten
-            ERC20 token, you can deposit via the “Deposit/Withdrawal” tab.
+            From the main screen you are able to view your balance and transfer your points to other addresses.
+            Make sure you are logged into your correct Metamask account holding points.
           </span>
         }
-        imageUrl={DespositGif}
+        imageUrl={TransferGif}
       />
       <ImageSlide
         text={
           <TweetSpan>
-            <span>Alternatively,</span> <TweetButton />{' '}
-            <span> at us and we’ll send some ETH and Arbiswap test token directly to you on the layer 2 chain.</span>
+            <span>If you don't have any points,</span> <TweetButton />{' '}
+            <span>at us and we’ll send some test tokens directly to you on the layer 2 chain.</span>
           </TweetSpan>
         }
         imageUrl={TwitterImage}
@@ -114,37 +117,20 @@ function WelcomeCarousel() {
       <ImageSlide
         text={
           <span>
-            Once you have funds on layer 2, you can use it just like you would uniswap on layer 1; send, swap, add
-            liquidity, etc.
+              You can also use our Faucet that will be released soon.
           </span>
         }
-        imageUrl={ActionsGif}
+        imageUrl={Withdraw}
+        // textStyle={smallFontStyle}
       />
       <ImageSlide
         text={
           <span>
-            <span>
-              To withdraw your Ether / ERC20 tokens back to layer 1, select the "withdraw" option on the
-              deposits/withdraw panel.{' '}
-            </span>
-            <br />
-            <br />
-            <span>
-              {' '}
-              Your balance will appear as "pending", and will be available to you in your lockbox after the "challenge
-              period." See our{' '}
-              <Link
-                href="https://medium.com/offchainlabs/optimizing-challenge-periods-in-rollup-b61378c87277"
-                target="_blank"
-              >
-                blog post
-              </Link>{' '}
-              for more info!{' '}
-            </span>
+            You can also claim tokens from your Reddit account depending on the distribution round. 
+            You can read more about this <Link target="_blank" href="https://www.google.com">here</Link>.
           </span>
         }
-        imageUrl={Withdraw}
-        textStyle={smallFontStyle}
+        imageUrl={ActionsGif}
       />
       <ImageSlide
         text={
