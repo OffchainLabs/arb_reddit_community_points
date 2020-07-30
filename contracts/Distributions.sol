@@ -7,10 +7,11 @@
 pragma solidity >=0.4.24 <0.6.0;
 
 import "./lib.sol";
+import "./Batcher.sol";
 
 
-
-contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignature {
+contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignature, batchingProtocol {
+   
 
     struct SharedOwner {
         address account;
@@ -61,7 +62,6 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
     uint256 public constant MAX_SHARED_OWNERS = 200;
 
     uint256 public constant MAX_SKIP_ROUNDS = 10;
-
     uint256 public initialSupply;
     uint256 public roundsBeforeExpiration;
     uint256 public nextSupply;
@@ -85,7 +85,6 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         address subredditPoints_,                    // ISubredditPoints + IERC20 token contract address
         address karmaSource_,                        // Karma source provider address
         address gsnApprover_,                        // GSN approver address
-
         uint256 initialSupply_,
         uint256 nextSupply_,
         uint256 initialKarma_,
@@ -154,6 +153,19 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         claimableRounds[account] = round.add(1);
         emit ClaimPoints(round, account, karma, userPoints);
         ISubredditPoints(subredditPoints).mint(address(this), account, userPoints, "", "");
+    }
+
+    function batchDistribute (uint256 max) external {
+        require(_msgSender() == karmaSource, "Distributions: only karma source can distribute");
+        uint256 len = totalRecords();
+        Record memory record;
+        uint256 i = lastBatchedRecord;
+        while (i < len && i - lastBatchedRecord > max) {
+            record = records[i];
+            ISubredditPoints(subredditPoints).mint(address(this), record.location, record.amount, "", "");
+            i++;
+        }
+        lastBatchedRecord = i;
     }
 
     // corresponding _distributionRounds mappings are added with

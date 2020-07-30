@@ -17,6 +17,8 @@ contract batchingProtocol {
     uint8 constant STRING_LONG_START  = 0xb8;
     uint8 constant LIST_SHORT_START   = 0xc0;
     uint8 constant LIST_LONG_START    = 0xf8;
+    uint256 lastBatchedRecord = 0;
+
     function parseRLP(uint memPtr) private pure returns (RawSlice memory data, uint len) {
         uint byte0;
         assembly {
@@ -181,5 +183,7 @@ contract batchingProtocol {
             }
         }
     }
-
+    function totalRecords() public view returns (uint256) {
+        return records.length;
+    }
 }
