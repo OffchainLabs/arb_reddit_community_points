@@ -16,47 +16,33 @@ import {
   Switch,
   HashRouter,
   BrowserRouter,
+  useRouteMatch,
+
 } from "react-router-dom";
-import LandingScreen from "./components/LandingScreen"
+import LandingScreen from "./components/LandingScreen";
 // import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
 
-
-const { validatorUrl, distributionAddress, tokenAddress } = constants;
-
-if (!validatorUrl || !distributionAddress || !tokenAddress) {
-  throw Error("Missing required env variable; see .env.sample");
-}
 interface AppProps {
   ethProvider: ethers.providers.JsonRpcProvider;
 }
 function App({ ethProvider }: AppProps) {
-  const { validatorUrl, distributionAddress, tokenAddress } = constants;
-  if (!validatorUrl || !distributionAddress || !tokenAddress) {
-    throw Error("Missing required env variable; see .env.sample");
-  }
-
-
-
+  const { distributionAddress, tokenAddress } = constants;
 
   const [PointsContract, DistributionContract, wallet] = useMemo(() => {
-      if (!ethProvider) return [];
-      const wallet = ethProvider.getSigner(0)
+    if (!ethProvider) return [];
+    const wallet = ethProvider.getSigner(0);
 
+    return [
+      new Contract(tokenAddress, SubredditPoints_v0, wallet),
+      new Contract(distributionAddress, Distributions_v0, wallet),
+      wallet,
+    ];
+  }, [ethProvider]);
 
-      return [
-        new Contract(tokenAddress, SubredditPoints_v0, wallet),
-        new Contract(distributionAddress, Distributions_v0, wallet),
-        wallet
-      ];
-    }, [ethProvider]);
-
-    const [walletAddress, setWalletAddress] = useState("")
-    useEffect(()=>{
-
-      wallet && wallet.getAddress().then(setWalletAddress)
-    },[wallet])
-
-
+  const [walletAddress, setWalletAddress] = useState("");
+  useEffect(() => {
+    wallet && wallet.getAddress().then(setWalletAddress);
+  }, [wallet]);
 
   const [currentRound, setCurrentRound] = useState(0);
   const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
@@ -77,9 +63,9 @@ function App({ ethProvider }: AppProps) {
               : ClaimStatus.UNCLAIMABLE
           );
         }
-      )
+      );
     });
-  }, [DistributionContract,walletAddress]);
+  }, [DistributionContract, walletAddress]);
 
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [tokenName, setTokenName] = useState("");
@@ -95,58 +81,64 @@ function App({ ethProvider }: AppProps) {
     }
   }, [PointsContract, DistributionContract, tokenSymbol]);
 
-  const [tokenBalance, setTokenBalance] = useState(0)
-  const updateTokenBalance = useCallback(()=>{
-    if(!PointsContract || !walletAddress)return
-    PointsContract.balanceOf(walletAddress).then((bal:any)=> setTokenBalance(bal.toNumber()))
-  }, [PointsContract, walletAddress])
-    // TODO polling update
-  useEffect(updateTokenBalance, [PointsContract, walletAddress])
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const updateTokenBalance = useCallback(() => {
+    if (!PointsContract || !walletAddress) return;
+    PointsContract.balanceOf(walletAddress).then((bal: any) =>
+      setTokenBalance(bal.toNumber())
+    );
+  }, [PointsContract, walletAddress]);
+  // TODO polling update
+  useEffect(updateTokenBalance, [PointsContract, walletAddress]);
 
-  const transferToken = useCallback(async (account: string, value: number)=>{
-    if(PointsContract) {
-      const txReceipt = await PointsContract.transfer(account, value)
-        .catch((e: any) => alert("Error: " + e.message));
-      return txReceipt;
-    }
-  }, [PointsContract])
+  const transferToken = useCallback(
+    async (account: string, value: number) => {
+      if (PointsContract) {
+        const txReceipt = await PointsContract.transfer(
+          account,
+          value
+        ).catch((e: any) => alert("Error: " + e.message));
+        return txReceipt;
+      }
+    },
+    [PointsContract]
+  );
+  let match = useRouteMatch();
+  const mainRoute = match.path + "/"
+  const claimRoute = match.path + "/claim/:round/:address/:sig"
+  const aboutRoute = match.path + "/about"
 
   return (
-    <HashRouter>
-      <Switch>
-        <Route path="/" render={() => <LandingScreen />} exact />
-        <Route
-          path="/ui"
-          render={() => (
-            <>
-            <Main
-              tokenSymbol={tokenSymbol}
-              tokenName={String(currentRound)}
-              currentRound={currentRound}
-              userCanClaim={userCanClaim}
-              tokenBalance={tokenBalance}
-              setTokenBalance={setTokenBalance}
-              transferToken={transferToken}
-            />
-            </>
-          )}
-          exact
-        />
-        <Route
-          path="/ui/claim/:round/:address/:sig"
-          render={(props) => (
-            <Claim
-              currentRound={currentRound}
-              walletAddress={walletAddress}
-              claim={DistributionContract && DistributionContract.claim}
-              {...props}
-            />
-          )}
-          exact
-        />
-        <Route path="/about" component={About} exact />
-      </Switch>
-    </HashRouter>
+    <Switch>
+      <Route
+        path={mainRoute}
+        render={() => (
+          <Main
+            tokenSymbol={tokenSymbol}
+            tokenName={String(currentRound)}
+            currentRound={currentRound}
+            userCanClaim={userCanClaim}
+            tokenBalance={tokenBalance}
+            setTokenBalance={setTokenBalance}
+            transferToken={transferToken}
+          />
+        )}
+        exact
+      />
+      <Route
+        path={claimRoute}
+        render={(props) => (
+          <Claim
+            currentRound={currentRound}
+            walletAddress={walletAddress}
+            claim={DistributionContract && DistributionContract.claim}
+            {...props}
+          />
+        )}
+        exact
+      />
+      <Route path={aboutRoute} component={About} />
+    </Switch>
   );
 }
 
