@@ -7,10 +7,9 @@
 pragma solidity >=0.4.24 <0.6.0;
 
 import "./lib.sol";
-import "./Batcher.sol";
 
 
-contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignature, batchingProtocol {
+contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignature {
    
 
     struct SharedOwner {
@@ -131,6 +130,11 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         emit AdvanceRound(0, initialSupply, sharedOwnersPoints);
     }
 
+    function batchMint(bytes memory input) public {
+        require(_msgSender() == karmaSource, "Distributions: only karma source can distribute");
+        ISubredditPoints(subredditPoints).batchMint(input);
+    }
+
     function claim(uint256 round, address account, uint256 karma, bytes calldata signature) external {
         require(karma > 0, "Distributions: karma should be > 0");
         require(claimableRounds[account] <= round, "Distributions: this rounds points are already claimed");
@@ -153,19 +157,6 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         claimableRounds[account] = round.add(1);
         emit ClaimPoints(round, account, karma, userPoints);
         ISubredditPoints(subredditPoints).mint(address(this), account, userPoints, "", "");
-    }
-
-    function batchDistribute (uint256 max) external {
-        require(_msgSender() == karmaSource, "Distributions: only karma source can distribute");
-        uint256 len = totalRecords();
-        Record memory record;
-        uint256 i = lastBatchedRecord;
-        while (i < len && i - lastBatchedRecord > max) {
-            record = records[i];
-            ISubredditPoints(subredditPoints).mint(address(this), record.location, record.amount, "", "");
-            i++;
-        }
-        lastBatchedRecord = i;
     }
 
     // corresponding _distributionRounds mappings are added with
