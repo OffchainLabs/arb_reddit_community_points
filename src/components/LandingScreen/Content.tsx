@@ -32,7 +32,7 @@ const Content = (): any => {
           secondaryText="Claim and transfer your points"
           expandedText="The Reddit Community Points dashboard allows you to claim different points as well as transfer it to different accounts, all using Arbitrum Rollup technology."
           imageUrl={img}
-          onClick={() => alert("oops gotta route to that")}
+          onClick={() => window.open("/#/ui", "_blank")}
         />
       </Grid>
     </Grid>
