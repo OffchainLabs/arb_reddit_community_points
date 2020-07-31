@@ -9,7 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Alert from "@material-ui/lab/Alert";
-import TopNavbar from "./Navbar";
+import Header from "./LandingScreen/Header"
+import rollup from "../assets/images/logo.png";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -122,9 +123,11 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
     }
   };
 
+  const img = <img draggable={false} src={rollup} alt="Arbitrum Rollup" style={{ height: "50px" }}></img>;
+
   return (
-    <div style={{marginTop: "60px"}}>
-    <TopNavbar />
+    <>
+    <Header title="Arbitrum Comunity Points" img={img} />
     <Grid
       container
       spacing={4}
@@ -190,7 +193,7 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
       </Grid>
       <Grid item>{render(readyState)}</Grid>
     </Grid>
-    </div>
+    </>
   );
 };
 export default Claim;
