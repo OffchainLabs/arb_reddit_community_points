@@ -13,8 +13,6 @@ import Alert from "@material-ui/lab/Alert";
 
 import Grid from "@material-ui/core/Grid";
 
-const { distributionAddress, tokenAddress, infuraId, infuraSecret } = constants;
-
 
 const Web3Injector = () => {
   const [shouldOpenModalCache, setShouldOpenModalCache] = useLocalStorage(
@@ -75,13 +73,13 @@ const Web3Injector = () => {
       );
     }
   }
-
+  document.title = "Arb Community Points"
   return (
     <div>
-      {/* <WelcomeModal
+      <WelcomeModal
         shouldOpenModalCache={shouldOpenModalCache}
         setShouldOpenModalCache={setShouldOpenModalCache}
-      /> */}
+      />
       {getContent()}
       {/* <App ethProvider={ethProvider} /> */}
     </div>
