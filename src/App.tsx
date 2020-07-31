@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import "./App.css";
 import { ethers, Contract, utils } from "ethers";
 import { getInjectedWeb3 } from "./lib/web3";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,7 +17,8 @@ import {
   HashRouter,
   BrowserRouter,
 } from "react-router-dom";
-import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
+import LandingScreen from "./components/LandingScreen"
+// import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
 
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
@@ -103,29 +103,37 @@ function App({ ethProvider }: AppProps) {
     // TODO polling update
   useEffect(updateTokenBalance, [PointsContract, walletAddress])
 
-  const transferToken = useCallback((account: string, value: number)=>{
-    PointsContract && PointsContract.transfer(account, value)
+  const transferToken = useCallback(async (account: string, value: number)=>{
+    if(PointsContract) {
+      const txReceipt = await PointsContract.transfer(account, value)
+        .catch((e: any) => alert("Error: " + e.message));
+      return txReceipt;
+    }
   }, [PointsContract])
 
   return (
     <HashRouter>
       <Switch>
+        <Route path="/" render={() => <LandingScreen />} exact />
         <Route
-          path="/"
+          path="/ui"
           render={() => (
+            <>
             <Main
               tokenSymbol={tokenSymbol}
               tokenName={String(currentRound)}
               currentRound={currentRound}
               userCanClaim={userCanClaim}
               tokenBalance={tokenBalance}
+              setTokenBalance={setTokenBalance}
               transferToken={transferToken}
             />
+            </>
           )}
           exact
         />
         <Route
-          path="/claim/:round/:address/:sig"
+          path="/ui/claim/:round/:address/:sig"
           render={(props) => (
             <Claim
               currentRound={currentRound}

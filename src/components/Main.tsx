@@ -17,7 +17,21 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import { ClaimStatus } from "../lib/index";
-import { useStyles } from "../themes/styles";
+import { Button } from "react-bootstrap";
+import TopNavbar from "./Navbar";
+
+const useStyles = makeStyles((theme) => {
+  return {
+    paper: {
+      textAlign: "left",
+      color: theme.palette.text.secondary,
+      minHeight: "17rem",
+      minWidth: "25rem",
+      width: "100%",
+      height: "100%"
+    },
+  }
+})
 
 const { validatorUrl, distributionAddress, tokenAddress } = constants;
 
@@ -27,14 +41,94 @@ interface props {
   currentRound: number;
   userCanClaim: ClaimStatus;
   tokenBalance: number;
-  transferToken: (account: string, value: number) => void;
+  transferToken: (account: string, value: number) => any;
+  setTokenBalance: (value: number | ((prevVar: number) => number)) => void;
 }
 
-function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, transferToken }: props) {
+const Distribution = (props: any) => {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+  // TODO: destructure
+  props = props.props
+  return (
+    <Paper className={classes.paper}>
+      <List dense={true}>
+        <ListItem>
+          <ListItemText
+            primary={`Distribution Round: ${props.currentRound}`}
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            primary={`Next Round in: ${secondsToReadableTime(
+              props.timeRemaining
+            )}`}
+          />
+        </ListItem>
+      </List>
+    </Paper>
+  )
+}
+
+const UserTokens = (props: any) => {
+  const classes = useStyles();
+  // TODO: destructure
+  props = props.props
+  return (
+    <Paper className={classes.paper} >
+      <List>
+        <ListItem>
+          <ListItemText primary={`Your Tokens: ${props.tokenBalance}`} />
+        </ListItem>
+        <ListItem>
+          {/* <form noValidate autoComplete="off" onSubmit={props.transfer}> */}
+          <Grid container spacing={3} direction="row">
+            <Grid item xs={12} md={6}>
+              <TextField
+                error={props.addressError}
+                label="Transfer"
+                variant="outlined"
+                placeholder="Address"
+                value={props.addressValue}
+                onChange={(e) => props.setAddressValue(e.target.value)}
+                disabled={props.tokenBalance === 0}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                error={props.valueError}
+                label="Value"
+                type="number"
+                variant="outlined"
+                placeholder="Amount"
+                value={props.amountValue}
+                onChange={(e) => props.setAmountValue(e.target.value)}
+                disabled={props.tokenBalance === 0}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              { props.txHash && (
+                <Typography noWrap >Success.<br/>Transaction hash: {props.txHash}</Typography>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <Button color="primary" onClick={props.transfer} >Submit</Button>
+            </Grid>
+          </Grid>
+          {/* </form> */}
+        </ListItem>
+      </List>
+    </Paper>
+  );
+};
+
+function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, transferToken, setTokenBalance }: props) {
+  const classes = useStyles();
+  // const bull = <span className={classes.bullet}>•</span>;
   const [addressValue, setAddressValue] = useState("");
   const [amountValue, setAmountValue] = useState("");
+  const [txHash, setTxHash] = useState(null);
 
   const [timeRemaining, setTimeRemaining] = useState(9000);
 
@@ -52,10 +146,14 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
     }, 1000);
   }, []);
   const transfer = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
 
-      transferToken(addressValue, Number(amountValue))
+      const txReceipt = await transferToken(addressValue, Number(amountValue))
+      if(txReceipt) {
+        setTxHash(txReceipt.hash)
+        setTokenBalance(balance => balance - Number(amountValue))
+      }
     },
     [addressValue, amountValue]
   );
@@ -72,83 +170,42 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
   }, [amountValue, tokenBalance])
 
   return (
-    <div>
-      <div className={classes.root}>
-        <Grid
-          justify="center"
-          alignItems="center"
-          container
-          spacing={5}
-          direction={"row"}
-        >
-          <Grid item xs={4} md={4} lg={4}>
-            <div className={classes.demo}>
-              <Paper className={classes.paper}>
-                <List className={classes.list} dense={true}>
-                  <ListItem>
-                    <ListItemText primary={`Your Tokens: ${tokenBalance}`} />
-                  </ListItem>
-                  <ListItem>
-                    <form noValidate autoComplete="off" onSubmit={transfer}>
-                      <TextField
-                        error={addressError}
-                        label="Transfer"
-                        variant="outlined"
-                        placeholder="address"
-                        value={addressValue}
-                        onChange={(e) => setAddressValue(e.target.value)}
-                        disabled={tokenBalance !== 0}
-                      />
-                          <TextField
-                        error={valueError}
-                        label="Value"
-                        type="number"
-                        variant="outlined"
-                        placeholder="amount"
-                        value={amountValue}
-                        onChange={(e) => setAmountValue(e.target.value)}
-                        disabled={tokenBalance !== 0}
-                      />
-
-                    </form>
-                  </ListItem>
-                </List>
-              </Paper>
-            </div>
-          </Grid>
-          <Grid item xs={4} md={4} lg={4}>
-            <div className={classes.demo}>
-              <Paper className={classes.paper}>
-                <List className={classes.list} dense={true}>
-                  <ListItem>
-                    <ListItemText
-                      primary={`Distribution Round: ${currentRound}`}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText
-                      primary={`Next Round in: ${secondsToReadableTime(
-                        timeRemaining
-                      )}`}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
-            </div>
-          </Grid>
-        </Grid>
-        <Grid
-          justify="center"
-          alignItems="center"
-          container
-          spacing={5}
-          direction={"row"}
-        >
-          <Grid item>
-            <Tweet userCanClaim={userCanClaim} />
-          </Grid>
-        </Grid>
-      </div>
+    <div style={{marginTop: "60px"}}>
+    <TopNavbar />
+    <Grid
+      container
+      spacing={5}
+      direction="row"
+      style={{
+        padding: 30,
+        margin: 0,
+        width: '100%',
+      }}
+      component="div"
+      alignItems="center"
+      justify="center"
+    >
+      <Grid item xs={12} md={6}>
+        <UserTokens
+          props={{
+            tokenBalance,
+            transfer,
+            addressError,
+            addressValue,
+            valueError,
+            amountValue,
+            setAmountValue,
+            setAddressValue,
+            txHash
+          }} />
+      </Grid>
+      <Grid item xs={12} md={6}>
+          <Distribution props={{ currentRound, timeRemaining }} />
+      </Grid>
+      <Grid item xs={12} container direction="row" alignItems="center" justify="center">
+          <Tweet userCanClaim={userCanClaim} />
+      </Grid>
+    </Grid>
     </div>
   );
 }

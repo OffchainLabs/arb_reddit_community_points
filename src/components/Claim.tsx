@@ -3,14 +3,28 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Card from "@material-ui/core/Card";
+import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { useStyles } from "../themes/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Paper from "@material-ui/core/Paper";
 import Alert from "@material-ui/lab/Alert";
+import TopNavbar from "./Navbar";
+
+const useStyles = makeStyles((theme) => {
+  return {
+    paper: {
+      textAlign: "left",
+      color: theme.palette.text.secondary,
+      minHeight: "8rem",
+    },
+    list: {
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(2),
+      minWidth: "500px",
+    },
+  };
+});
 
 interface ClaimProps {
   match: {
@@ -92,17 +106,15 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
 
       case ReadyState.Waiting:
         return (
-          <Button onClick={claimCoins}>
+          // <Button onClick={claimCoins}>
             <CircularProgress />
-          </Button>
+          // </Button>
         );
       case ReadyState.Valid:
         return (
-          <div>
-            <Button color="primary" variant="contained" onClick={claimCoins}>
-              Claim your points!
-            </Button>
-          </div>
+          <Button color="primary" variant="contained" onClick={claimCoins}>
+            Claim your points!
+          </Button>
         );
 
       default:
@@ -111,15 +123,24 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   };
 
   return (
-    <div>
-      <Grid container spacing={1} direction={"column"} alignItems={"center"}>
-        <Grid item xs={12} md={12} lg={12}>
-          <div className={classes.demo}>
-            <Paper className={classes.paper}>
+    <div style={{marginTop: "60px"}}>
+    <TopNavbar />
+    <Grid
+      container
+      spacing={4}
+      direction="column"
+      alignItems="center"
+      style={{
+        margin: 0,
+        width: '100%',
+      }}
+    >
+      <Grid item />
+      <Grid item component={Paper} className={classes.paper}>
+          <List className={classes.list}>
+            <ListItem>
               <TextField
-                id="standard-full-width"
                 label="Round Number"
-                style={{ margin: 8 }}
                 placeholder="Placeholder"
                 fullWidth
                 margin="normal"
@@ -128,23 +149,31 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                InputProps={{
+                  disableUnderline: true,
+                }}
               />
+            </ListItem>
+            <Divider />
+            <ListItem>
               <TextField
-                id="standard-full-width"
                 label="Address"
-                style={{ margin: 8 }}
                 fullWidth
                 margin="normal"
                 disabled
                 InputLabelProps={{
                   shrink: true,
                 }}
+                InputProps={{
+                  disableUnderline: true,
+                }}
                 value={address}
               />
+            </ListItem>
+            <Divider />
+            <ListItem>
               <TextField
-                id="standard-full-width"
                 label="Signature"
-                style={{ margin: 8 }}
                 fullWidth
                 disabled
                 value={sig}
@@ -152,14 +181,15 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
+                InputProps={{
+                  disableUnderline: true,
+                }}
               />
-            </Paper>
-          </div>
-        </Grid>
-        <Grid item xs={12} md={12} lg={12}>
-          <Paper className={classes.demo}>{render(readyState)}</Paper>
-        </Grid>
+            </ListItem>
+          </List>
       </Grid>
+      <Grid item>{render(readyState)}</Grid>
+    </Grid>
     </div>
   );
 };
