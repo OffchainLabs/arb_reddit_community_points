@@ -109,6 +109,7 @@ export default function RecipeReviewCard({
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
+          style={{outline: "none"}}
         >
           <ExpandMoreIcon />
         </IconButton>

@@ -4,7 +4,6 @@ import React from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 
-import rollup from "../../assets/images/logo.png";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,9 +21,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = ({title, img}) => {
   const classes = useStyles();
-  const img = <img draggable={false} src={rollup} alt="Arbitrum Rollup" style={{ height: "50px" }}></img>;
 
   return (
     // ie 11 doesn't support position="sticky"
@@ -34,7 +32,7 @@ const Header = () => {
           <Grid item>{img}</Grid>
           <Grid item>
             <Typography variant="h6" className={classes.title}>
-              Arbitrum Reddit Portal
+              {title}
             </Typography>
           </Grid>
         </Grid>
