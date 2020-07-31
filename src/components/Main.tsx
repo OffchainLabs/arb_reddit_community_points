@@ -18,6 +18,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import { ClaimStatus } from "../lib/index";
 import { Button } from "react-bootstrap";
+import TopNavbar from "./Navbar";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -169,6 +170,8 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
   }, [amountValue, tokenBalance])
 
   return (
+    <div style={{marginTop: "60px"}}>
+    <TopNavbar />
     <Grid
       container
       spacing={5}
@@ -203,6 +206,7 @@ function App({ tokenSymbol, tokenName, currentRound, userCanClaim,tokenBalance, 
           <Tweet userCanClaim={userCanClaim} />
       </Grid>
     </Grid>
+    </div>
   );
 }
 

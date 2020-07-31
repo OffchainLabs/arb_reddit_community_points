@@ -17,6 +17,7 @@ import {
   HashRouter,
   BrowserRouter,
 } from "react-router-dom";
+import LandingScreen from "./components/LandingScreen"
 // import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
 
 
@@ -113,8 +114,9 @@ function App({ ethProvider }: AppProps) {
   return (
     <HashRouter>
       <Switch>
+        <Route path="/" render={() => <LandingScreen />} exact />
         <Route
-          path="/"
+          path="/ui"
           render={() => (
             <>
             <Main
@@ -131,7 +133,7 @@ function App({ ethProvider }: AppProps) {
           exact
         />
         <Route
-          path="/claim/:round/:address/:sig"
+          path="/ui/claim/:round/:address/:sig"
           render={(props) => (
             <Claim
               currentRound={currentRound}

@@ -5,7 +5,6 @@ import WelcomeModal from "./components/Modal/index.jsx";
 import { useLocalStorage } from "@rehooks/local-storage";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import TopNavbar from "./components/Navbar";
 import constants from "./lib/constants";
 import { ethers } from "ethers";
 import App from "./App";
@@ -54,9 +53,11 @@ const Web3Injector = () => {
     getInjectedWeb3().then(setEthProvider);
   }, []);
 
-  useEffect(() => {
+  const getContent = () => {
     if (ethProvider instanceof ethers.providers.JsonRpcProvider) {
-      setRenderedContent(<App ethProvider={ethProvider} />);
+      return(
+        <App ethProvider={ethProvider} />
+      );
 
       // ethProvider.getNetwork().then((network) => {
       //   if (network["chainId"] !== networkId) {
@@ -70,7 +71,7 @@ const Web3Injector = () => {
       //   }
       // })
     } else if (ethProvider === Web3Error.NO_CONNECTION) {
-      setRenderedContent(
+      return (
         <Grid container justify="center" alignItems="center">
           <Alert severity="error">
             Ethereum provider not found;{" "}
@@ -82,7 +83,7 @@ const Web3Injector = () => {
         </Grid>
       );
     } else if (ethProvider === Web3Error.BAD_NETWORK_ID) {
-      setRenderedContent(
+      return (
         <Grid container justify="center" alignItems="center">
           <Alert severity="error">
             Please connect to {netoworkIdToName[networkId]}{" "}
@@ -90,17 +91,16 @@ const Web3Injector = () => {
         </Grid>
       );
     }
-  }, [ethProvider]);
+  }
 
   return (
-    <>
+    <div>
       <WelcomeModal
         shouldOpenModalCache={shouldOpenModalCache}
         setShouldOpenModalCache={setShouldOpenModalCache}
       />
-      <TopNavbar />
-      {renderedContent}
-    </>
+      {getContent()}
+    </div>
   );
 };
 
