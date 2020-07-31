@@ -13,11 +13,8 @@ import Alert from "@material-ui/lab/Alert";
 
 import Grid from "@material-ui/core/Grid";
 
-const { validatorUrl, distributionAddress, tokenAddress } = constants;
+const { distributionAddress, tokenAddress, infuraId, infuraSecret } = constants;
 
-if (!validatorUrl || !distributionAddress || !tokenAddress) {
-  throw Error("Missing required env variable; see .env.sample");
-}
 
 const Web3Injector = () => {
   const [shouldOpenModalCache, setShouldOpenModalCache] = useLocalStorage(
@@ -30,20 +27,6 @@ const Web3Injector = () => {
     </Grid>
   );
 
-  const {
-    validatorUrl,
-    distributionAddress,
-    tokenAddress,
-    networkId,
-  } = constants;
-  if (
-    !validatorUrl ||
-    !distributionAddress ||
-    !tokenAddress ||
-    networkId === undefined
-  ) {
-    throw Error("Missing required env variable; see .env.sample");
-  }
   const [ethProvider, setEthProvider] = useState(
     undefined,
     ethers.providers.JsonRpcProvider | Web3Error | undefined
@@ -86,7 +69,7 @@ const Web3Injector = () => {
       return (
         <Grid container justify="center" alignItems="center">
           <Alert severity="error">
-            Please connect to {netoworkIdToName[networkId]}{" "}
+            Please connect to to a good network ID.
           </Alert>
         </Grid>
       );
@@ -95,11 +78,12 @@ const Web3Injector = () => {
 
   return (
     <div>
-      <WelcomeModal
+      {/* <WelcomeModal
         shouldOpenModalCache={shouldOpenModalCache}
         setShouldOpenModalCache={setShouldOpenModalCache}
-      />
+      /> */}
       {getContent()}
+      {/* <App ethProvider={ethProvider} /> */}
     </div>
   );
 };

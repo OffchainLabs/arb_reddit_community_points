@@ -1,6 +1,6 @@
 import * as ethers from "ethers";
 import constants from "./constants";
-const { networkId } = constants;
+// const { networkId } = constants;
 
 interface InjectedEthereumProvider
   extends ethers.ethers.providers.AsyncSendable {

@@ -68,7 +68,7 @@ export default function RecipeReviewCard({
 
   return (
     <Card className={classes.root}>
-      <CardActionArea onClick={handleExpandClick}>
+      <CardActionArea onClick={handleExpandClick} style={{outline: "none"}}>
         <CardHeader
           avatar={
             <Avatar aria-label="recipe" className={classes.avatar}>

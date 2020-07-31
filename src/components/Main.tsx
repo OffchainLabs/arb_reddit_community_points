@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => {
   }
 })
 
-const { validatorUrl, distributionAddress, tokenAddress } = constants;
+const { distributionAddress, tokenAddress } = constants;
 
 interface props {
   tokenSymbol: string;
