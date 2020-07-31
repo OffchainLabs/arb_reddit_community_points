@@ -5,13 +5,14 @@
   "main": "./dist/index.js",
   "files": [
     "dist/index.js"
-    ],
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "get_token": "tsc && node dist/scripts/get_token.js",
     "advance_round": "tsc && node dist/scripts/advance_round.js",
+    "generate_response": "tsc && node dist/scripts/generate_sig.js",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
   },
   "author": "",

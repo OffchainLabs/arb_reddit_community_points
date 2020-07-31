@@ -1,5 +1,4 @@
 import { startStream, reply } from './twitter'
-// import { transfer, resetFaucet, getAssertion, getTokenBalance, getEthBalance, getWalletEthBalance, getWalletAddress, getFaucetAddress, arbWallet } from './arb'
 import { ethers } from 'ethers'
 import { generateResponse } from './Distribution'
 

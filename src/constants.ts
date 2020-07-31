@@ -12,4 +12,6 @@ export default  {
     bearerToken: process.env.BEARER_TOKEN,
     faucetWalletAddress: process.env.FAUCET_WALLET_ADDRESS,
     distributionAddress: process.env.DISTRIBUTION_ADDRESS,
+    mneumonic: process.env.MNEUMONIC,
+    claimUrl: process.env.CLAIM_URL
 }
