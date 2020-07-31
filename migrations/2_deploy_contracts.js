@@ -19,13 +19,10 @@ module.exports = async function(deployer, network, accounts) {
   await subscriptions.methods['initialize(address,address,address,uint256,uint256,uint256)'](address,address,points.address,5000, 60,6)
 
   const symbol = await points.symbol.call()
-  console.log(' *** SubredditPoints_v0: symbol: *** ', symbol);
+  console.info(' *** SubredditPoints_v0: symbol: *** ', symbol);
 
   const  initSupply = await dist.initialSupply()
-  console.warn('*** Distributions_v0 initial supply ***', initSupply.toString());
-
-
+  console.info('*** Distributions_v0 initial supply ***', initSupply.toString());
   
-
 
 };

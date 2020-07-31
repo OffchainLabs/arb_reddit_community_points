@@ -1,6 +1,8 @@
 pragma solidity >=0.5.0 < 0.6.0;
 
 contract ISubredditPoints {
+    function batchMint(bytes calldata input) external;
+
     function mint(
         address operator,
         address account,

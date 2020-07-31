@@ -9,10 +9,10 @@
     "arb-provider-ethers": "^0.6.5",
     "ethers": "^4.0.44",
     "file-loader": "^5.0.2",
-    "truffle": "^5.1.11"
+    "truffle": "^5.1.37"
   },
   "dependencies": {
-    "@truffle/hdwallet-provider": "^1.0.39",
+    "@truffle/hdwallet-provider": "^1.0.40",
     "arb-provider-ethers": "^0.6.5",
     "ethers": "^4.0.44",
     "node-fetch": "^2.6.0",

@@ -9,8 +9,8 @@ pragma solidity >=0.4.24 <0.6.0;
 import "./lib.sol";
 
 
-
 contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignature {
+   
 
     struct SharedOwner {
         address account;
@@ -61,7 +61,6 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
     uint256 public constant MAX_SHARED_OWNERS = 200;
 
     uint256 public constant MAX_SKIP_ROUNDS = 10;
-
     uint256 public initialSupply;
     uint256 public roundsBeforeExpiration;
     uint256 public nextSupply;
@@ -85,7 +84,6 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         address subredditPoints_,                    // ISubredditPoints + IERC20 token contract address
         address karmaSource_,                        // Karma source provider address
         address gsnApprover_,                        // GSN approver address
-
         uint256 initialSupply_,
         uint256 nextSupply_,
         uint256 initialKarma_,
@@ -130,6 +128,11 @@ contract Distributions_v0 is Initializable, Ownable, UpdatableGSNRecipientSignat
         });
 
         emit AdvanceRound(0, initialSupply, sharedOwnersPoints);
+    }
+
+    function batchMint(bytes memory input) public {
+        require(_msgSender() == karmaSource, "Distributions: only karma source can distribute");
+        ISubredditPoints(subredditPoints).batchMint(input);
     }
 
     function claim(uint256 round, address account, uint256 karma, bytes calldata signature) external {
