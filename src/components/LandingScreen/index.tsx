@@ -5,6 +5,7 @@ import Content from "./Content";
 import Header from "./Header";
 
 const Index = (): any => {
+  document.title="Arbitrum Reddit Portal"
   return (
     <>
       <Header />
