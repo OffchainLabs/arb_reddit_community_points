@@ -33,5 +33,6 @@ const extractAddress = (str: string): string=> {
 }
 
 const isFaucetRequest = (tweetText): boolean=>{
-    return tweetText.includes("gimme") && tweetText.includes("tokens")
+    const lcaseTweet =  tweetText.toLowerCase()
+    return lcaseTweet.includes("points")
 }
