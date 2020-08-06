@@ -48,6 +48,7 @@ export const batchClaims  = async (count: number, next?: () => any)=>{
 
 
 export const batchSubscribes = async  (count: number, next?: () => any)=>{
+    console.info(`broadcasting ${count} subscribes...`)
     let txCount =  await arbWallet.getTransactionCount()
     const subscribes = []
     for (let i = 0; i < count; i++) {
