@@ -17,7 +17,7 @@ module.exports = async function(deployer, network, accounts) {
   await dist.methods['initialize(address,address,address,address,uint256,uint256,uint256,uint256,uint256,address[],uint256[])'](address, points.address, address, address, '2000000', '1000000', '2000000', '1000', '5',[],[])
   await points.updateDistributionContract(dist.address)
   await subscriptions.methods['initialize(address,address,address,uint256,uint256,uint256)'](address,address,points.address,"1", "60","6")
-
+  await points.authorizeOperator(subscriptions.address)
   const symbol = await points.symbol.call()
   console.info(' *** SubredditPoints_v0 deployed: *** ', symbol);
 

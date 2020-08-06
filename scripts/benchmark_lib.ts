@@ -17,6 +17,9 @@ const printTotalGasUsed = (txnResponses: Promise<TransactionResponse>[],  messag
             
             next && next()
         })
+    }).catch((err)=>{
+        console.warn('GAS CALC ERROR', err);
+        
     })
 }
 
