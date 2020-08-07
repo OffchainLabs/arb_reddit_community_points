@@ -297,7 +297,7 @@ export const verifyUpdates = async () => {
         `Error emiting transfer events`
     );
     const burnLogs = await arbProvider.getLogs({
-        fromBlock: 0,
+        fromBlock: updates.initialBlockHeight,
         topics: [Burned.topic],
     });
     const burnTarget = updates.burns.count
