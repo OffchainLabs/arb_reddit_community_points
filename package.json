@@ -15,11 +15,13 @@
   },
   "scripts": {
     "deploy": "truffle migrate --network arbitrum --reset",
-    "benchmarks": "tsc && node dist/scripts/benchmarks.js"
+    "benchmarks": "tsc && node dist/scripts/benchmarks.js",
+    "format": " yarn run prettier --config-precedence file-override --write \"./scripts/**/*\""
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
     "arb-provider-ethers": "^0.6.5",
+    "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.6.0",
     "ethers": "^4.0.44",
