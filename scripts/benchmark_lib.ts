@@ -1,6 +1,6 @@
-import { arbWallet, generateSignature, DistributionsContract, PointsContract, SubscriptionsContract, batchMint, getLastRound,  } from "./contracts_lib"
+import { arbWallet, generateSignature, DistributionsContract, PointsContract, SubscriptionsContract, batchMint, getLastRound, l1Provider  } from "./contracts_lib"
 import { ethers, Wallet } from 'ethers'
-import { TransactionResponse } from 'ethers/providers'
+import { TransactionResponse, Log } from 'ethers/providers'
 import { BigNumber, formatEther } from 'ethers/utils'
 const karmaConstant = new BigNumber(1000)
 const round = new BigNumber(0)
@@ -23,6 +23,13 @@ const printTotalGasUsed = (txnResponses: Promise<TransactionResponse>[],  messag
     })
 }
 
+export const printL1GasUsed = async (log:Log, message: string) =>{
+    const txnResp = await l1Provider.getTransaction(log.transactionHash)
+    const txnReceipt = await txnResp.wait()
+    console.log(message + txnReceipt.gasUsed);
+    
+}
+
 const randomSignedClaim = async ()=>{
     const address = Wallet.createRandom().address
     const signature =   await generateSignature(address,round, karmaConstant)
@@ -43,7 +50,7 @@ export const batchClaims  = async (count: number, next?: () => any)=>{
             )
         txCount++
     }
-    printTotalGasUsed(claims, `Gas used in ${count} claims: `, next)
+    printTotalGasUsed(claims, `ArbGas used in ${count} claims: `, next)
 }
 
 
@@ -57,26 +64,29 @@ export const batchSubscribes = async  (count: number, next?: () => any)=>{
             )
         txCount++
     }
-    printTotalGasUsed(subscribes, `Gas used in ${count} subscribes: `,next)
+    printTotalGasUsed(subscribes, `ArbGas used in ${count} subscribes: `,next)
 }
 
 export const setup = async ()=>{
+    console.info('')
+    console.info('initializing...')
     const { address } = arbWallet
     const bal = await PointsContract.balanceOf(address)
     
     if (bal.isZero()) {
-        console.warn('op needs tokens....');
+        console.warn('Transfering tokens to main account...');
         const signature =   await generateSignature(address,round, karmaConstant)
         try { 
             const res = await DistributionsContract.claim(round, address, karmaConstant, signature)
             await res.wait()
-            console.info('tokens successfully claimed for op')
+            const bal = await PointsContract.balanceOf(address)
+            console.info(`Successfully claimed ${bal.toNumber()} tokens for main account; good to go!`)
         } catch (err){
             console.warn('Error claiming tokens for op:', err);
             
         }
     } else {
-        console.info('op has tokens:', bal.toNumber())
+        console.info(`Main account has ${bal.toNumber()} tokens; good to go!`)
     }
     console.info("")
 
@@ -92,7 +102,7 @@ export const batchTrasfers = async (count: number, next?: () => any)=>{
             )
         txCount++
     }
-    printTotalGasUsed(transfers, `Gas used in ${count} transfers: `, next)
+    printTotalGasUsed(transfers, `ArbGas used in ${count} transfers: `, next)
 }
 
 export const batchBurns = async (count: number, next?: () => any )=>{
@@ -107,5 +117,5 @@ export const batchBurns = async (count: number, next?: () => any )=>{
             )
         txCount++
     }
-    printTotalGasUsed(burns, `Gas used in ${count} burns: `,next)
+    printTotalGasUsed(burns, `ArbGas used in ${count} burns: `,next)
 }

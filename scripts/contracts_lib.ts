@@ -3,13 +3,15 @@ import { ethers, Contract, utils } from 'ethers'
 import { abi as Distributions_v0 } from "../build/contracts/Distributions_v0.json";
 import { abi as Subscriptions_v0 } from "../build/contracts/Subscriptions_v0.json";
 import { abi as SubredditPoints_v0 } from "../build/contracts/SubredditPoints_v0.json";
+import { L1Bridge } from 'arb-provider-ethers'
+
 require('dotenv').config();
 
 import * as contractAddresses from "../contract_addresses.json"
 
 (global as any).fetch = fetch;
 
-export const karmaConstant = new utils.BigNumber(20)
+export const karmaConstant = new utils.BigNumber(1000)
 const subredditLowerCase = "arbitrumreddit"
 
 const ethereumProvider = new ethers.providers.JsonRpcProvider(process.env.ARB_PROVIDER_URL)
@@ -21,6 +23,16 @@ const mnemonic = process.env.MNEUMONIC
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic)
 
 export const arbWallet  = ethereumWallet.connect(ethereumProvider)
+
+
+export const l1Provider = new ethers.providers.JsonRpcProvider(process.env.ETH_PROVIDER_URL)
+const l1Wallet = ethers.Wallet.fromMnemonic(mnemonic)
+
+const l1Signer  = l1Wallet.connect(l1Provider)
+
+export const l1Bridge = new L1Bridge(l1Signer, process.env.ROLLUP_ADDRESS)
+
+
 
 export const DistributionsContract = new Contract(contractAddresses.distributionAddress, Distributions_v0, arbWallet)
 export const SubscriptionsContract = new Contract(contractAddresses.subscriptionsAddress, Subscriptions_v0, arbWallet)
