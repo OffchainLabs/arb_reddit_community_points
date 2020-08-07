@@ -8,6 +8,7 @@ import {
     getLastRound,
     l1Provider,
     l1Bridge,
+    arbProvider,
 } from "./contracts_lib";
 import { ethers, Wallet } from "ethers";
 import { TransactionResponse, Log } from "ethers/providers";
@@ -18,12 +19,13 @@ const chalk = require("chalk");
 const karmaConstant = new BigNumber(1000);
 const bigZero = new BigNumber(0);
 const round = bigZero;
-
 const updates = {
+    initialBlockHeight: 0,
     initialMainBalance: bigZero,
     claims: {
         claimedAddresses: [],
         value: new BigNumber(1000),
+        count: bigZero,
     },
     transfers: {
         recipientAddresses: [],
@@ -108,11 +110,12 @@ const randomSignedClaim = async () => {
 
 export const batchClaims = async (count: number, next?: () => any) => {
     console.info(chalk.blue(`broadcasting ${count} claims...`));
-
+    updates.claims.count = new BigNumber(count);
     let txCount = await arbWallet.getTransactionCount();
     const claims = [];
     for (let i = 0; i < count; i++) {
         const signedClaim = await randomSignedClaim();
+        updates.claims.claimedAddresses.push(signedClaim.address);
         claims.push(
             DistributionsContract.claim(
                 round,
@@ -183,14 +186,16 @@ export const setup = async () => {
         );
     }
     console.info("");
+    updates.initialBlockHeight = await l1Provider.getBlockNumber();
 };
 export const batchTransfers = async (count: number, next?: () => any) => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
     updates.transfers.count = new BigNumber(count);
-    const rec = Wallet.createRandom().address;
     let txCount = await arbWallet.getTransactionCount();
     const transfers = [];
     for (let i = 0; i < count; i++) {
+        const rec = Wallet.createRandom().address;
+        updates.transfers.recipientAddresses.push(rec);
         transfers.push(
             PointsContract.transfer(rec, updates.transfers.value, {
                 nonce: txCount,
@@ -216,32 +221,95 @@ export const batchBurns = async (count: number, next?: () => any) => {
 };
 
 export const verifyUpdates = async () => {
-    console.info(chalk.blue("Verifying updates:"));
+    console.info(chalk.blue("Verifying updates and events:"));
+
     const claimBalancePromises = updates.claims.claimedAddresses.map(
         (address) => PointsContract.balanceOf(address)
     );
     Promise.all(claimBalancePromises).then((balances) => {
-        balances.every((balance) => balance.eq(updates.claims.value))
-            ? console.info(chalk.green("Claims successful"))
-            : console.info(chalk.red("Error: claims unsuccessful"));
+        outputResult(
+            balances.every((balance) => balance.eq(updates.claims.value)),
+            `Balances updated from claims`,
+            "Error: claims unsuccessful"
+        );
     });
 
-    updates.transfers.recipientAddresses.map((address) =>
-        PointsContract.balanceOf(address)
+    const transferBalancePromises = updates.transfers.recipientAddresses.map(
+        (address) => PointsContract.balanceOf(address)
     );
-    Promise.all(claimBalancePromises).then((balances) => {
-        balances.every((balance) => balance.eq(updates.transfers.value))
-            ? console.info(chalk.green("Transfers successful"))
-            : console.info(chalk.red("Error: Transfers unsuccessful"));
+    Promise.all(transferBalancePromises).then((balances) => {
+        outputResult(
+            balances.every((balance) => balance.eq(updates.transfers.value)),
+            `Balances updated from transfers`,
+            "Error: Transfers error"
+        );
     });
-    
+
     const { address } = arbWallet;
     const newBal = await PointsContract.balanceOf(address);
     const diff = updates.transfers.count
         .mul(updates.transfers.value)
         .add(updates.burns.count.mul(updates.burns.value))
         .add(updates.subscribes.count.mul(updates.subscribes.value));
-    updates.initialMainBalance.sub(diff).eq(newBal)
-        ? console.info(chalk.green("Subscribes and burns successful"))
-        : console.info(chalk.red("Error: Subscribes/burns unsuccessful"));
+    outputResult(
+        updates.initialMainBalance.sub(diff).eq(newBal),
+        "Balance updated from subscribes and burns",
+        "Error: Subscribes/burns unsuccessful"
+    );
+
+    const { ClaimPoints } = DistributionsContract.interface.events;
+    const { Subscribed } = SubscriptionsContract.interface.events;
+    const { Transfer, Burned } = PointsContract.interface.events;
+
+    const claimLogs = await arbProvider.getLogs({
+        fromBlock: updates.initialBlockHeight,
+        topics: [ClaimPoints.topic],
+    });
+    outputResult(
+        claimLogs.length === updates.claims.count.toNumber(),
+        `${claimLogs.length} claim events emited`,
+        `Error emiting claim events`
+    );
+
+    const subscribedLogs = await arbProvider.getLogs({
+        fromBlock: updates.initialBlockHeight,
+        topics: [Subscribed.topic],
+    });
+    outputResult(
+        subscribedLogs.length === updates.subscribes.count.toNumber(),
+        `${subscribedLogs.length} subscribe events emited`,
+        `Error emiting subscribe events`
+    );
+
+    const transferLogs = await arbProvider.getLogs({
+        fromBlock: updates.initialBlockHeight,
+        topics: [Transfer.topic],
+    });
+
+    const transferTarget = updates.transfers.count
+        .add(updates.burns.count)
+        .add(updates.subscribes.count)
+        .add(updates.claims.count)
+        .toNumber();
+    outputResult(
+        transferLogs.length === transferTarget,
+        `${transferTarget} transfer events emited`,
+        `Error emiting transfer events`
+    );
+    const burnLogs = await arbProvider.getLogs({
+        fromBlock: 0,
+        topics: [Burned.topic],
+    });
+    const burnTarget = updates.burns.count
+        .add(updates.subscribes.count)
+        .toNumber();
+    outputResult(
+        burnLogs.length === burnTarget,
+        `${burnLogs.length} burns emited`,
+        `Error: only ${burnLogs.length} Burned events emitted`
+    );
+};
+
+const outputResult = (bool: boolean, success: string, fail: string) => {
+    bool ? console.info(chalk.green(success)) : console.info(chalk.red(fail));
 };

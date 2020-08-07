@@ -14,15 +14,15 @@ import * as contractAddresses from "../contract_addresses.json";
 export const karmaConstant = new utils.BigNumber(1000);
 const subredditLowerCase = "arbitrumreddit";
 
-const ethereumProvider = new ethers.providers.JsonRpcProvider(
+export const arbProvider = new ethers.providers.JsonRpcProvider(
     process.env.ARB_PROVIDER_URL
 );
 
-// const ethereumWallet = new ethers.Wallet(env.privateKey, ethereumProvider);
+// const ethereumWallet = new ethers.Wallet(env.privateKey, arbProvider);
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-export const arbWallet = ethereumWallet.connect(ethereumProvider);
+export const arbWallet = ethereumWallet.connect(arbProvider);
 
 export const l1Provider = new ethers.providers.JsonRpcProvider(
     process.env.ETH_PROVIDER_URL
