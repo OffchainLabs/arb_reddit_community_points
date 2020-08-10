@@ -16,7 +16,8 @@
   "scripts": {
     "deploy": "truffle migrate --network arbitrum --reset",
     "benchmarks": "tsc && node dist/scripts/benchmarks.js",
-    "format": " yarn run prettier --config-precedence file-override --write \"./scripts/**/*\""
+    "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
+    "burn_test": "tsc && node dist/scripts/burnTest.js"
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
