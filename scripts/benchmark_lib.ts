@@ -42,7 +42,7 @@ const updates = {
     },
 };
 
-const printTotalGasUsed = async (
+export const printTotalGasUsed = async (
     txnResponses: Promise<TransactionResponse>[],
     next?: () => any
 ) => {
@@ -51,20 +51,26 @@ const printTotalGasUsed = async (
     Promise.all(txnResponses)
         .then((responses) => {
             const receiptPromises = responses.map((res) => res.wait());
-            Promise.all(receiptPromises).then(async (receipts) => {
-                const totalGasUsed = receipts.reduce(
-                    (acc, current) => acc.add(current.gasUsed),
-                    new BigNumber(0)
-                );
-                console.log(chalk.green(`Used ${totalGasUsed} ArbGas`));
+            Promise.all(receiptPromises)
+                .then(async (receipts) => {
+                    const totalGasUsed = receipts.reduce(
+                        (acc, current) => acc.add(current.gasUsed),
+                        new BigNumber(0)
+                    );
+                    console.log(chalk.green(`Used ${totalGasUsed} ArbGas`));
 
-                const endBlock = await l1Provider.getBlockNumber();
+                    const endBlock = await l1Provider.getBlockNumber();
 
-                printL1GasUsed(startBlock + 1, endBlock, next);
-            });
+                    printL1GasUsed(startBlock + 1, endBlock, next);
+                })
+                .catch((err) => {
+                    console.warn("error getting receipts", err);
+                    next && next();
+                });
         })
         .catch((err) => {
-            console.warn(chalk.red("GAS CALC ERROR", err));
+            console.warn(chalk.red("error getting txn responses", err));
+            next && next();
         });
 };
 
@@ -268,7 +274,9 @@ export const verifyUpdates = async () => {
     outputResult(
         claimLogs.length === updates.claims.count.toNumber(),
         `${claimLogs.length} claim events emited`,
-        `Error emiting claim events`
+        `Error emiting claim events events:${
+            claimLogs.length
+        } target:${updates.claims.count.toNumber()}`
     );
 
     const subscribedLogs = await arbProvider.getLogs({
@@ -278,7 +286,9 @@ export const verifyUpdates = async () => {
     outputResult(
         subscribedLogs.length === updates.subscribes.count.toNumber(),
         `${subscribedLogs.length} subscribe events emited`,
-        `Error emiting subscribe events`
+        `Error emiting subscribe events: events:${
+            subscribedLogs.length
+        }, target: ${updates.subscribes.count.toNumber()}`
     );
 
     const transferLogs = await arbProvider.getLogs({
@@ -294,7 +304,7 @@ export const verifyUpdates = async () => {
     outputResult(
         transferLogs.length === transferTarget,
         `${transferTarget} transfer events emited`,
-        `Error emiting transfer events`
+        `Error emiting transfer events. events:${transferLogs.length} target:${transferLogs.length}`
     );
     const burnLogs = await arbProvider.getLogs({
         fromBlock: updates.initialBlockHeight,
@@ -306,7 +316,7 @@ export const verifyUpdates = async () => {
     outputResult(
         burnLogs.length === burnTarget,
         `${burnLogs.length} burns emited`,
-        `Error: only ${burnLogs.length} Burned events emitted`
+        `Error: only ${burnLogs.length} Burned events emitted; target: ${burnTarget}`
     );
 };
 
