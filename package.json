@@ -17,7 +17,8 @@
     "deploy": "truffle migrate --network arbitrum --reset",
     "benchmarks": "tsc && node dist/scripts/benchmarks.js",
     "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
-    "burn_test": "tsc && node dist/scripts/burnTest.js"
+    "burn_test": "tsc && node dist/scripts/burnTest.js",
+    "batchmint": "tsc node dist/scripts/batch-reddit-test.js"
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
@@ -27,6 +28,7 @@
     "dotenv": "^8.2.0",
     "eslint": "^7.6.0",
     "ethers": "^4.0.44",
+    "fs": "^0.0.1-security",
     "node-fetch": "^2.6.0",
     "prettier": "^2.0.5",
     "tslint": "^6.1.3",
