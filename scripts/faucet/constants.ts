@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+import * as contractAddresses from "../../contract_addresses.json"
 export default  {
     consumerKey: process.env.CONSUMER_KEY,
     consumerSecret: process.env.CONSUMER_SECRET,
@@ -9,8 +9,7 @@ export default  {
     ethProviderUrl: process.env.ETH_PROVIDER_URL,
     privateKey: process.env.PRIVATE_KEY,
     tokenAddress: process.env.TOKEN_ADDRESS,
-    faucetWalletAddress: process.env.FAUCET_WALLET_ADDRESS,
-    distributionAddress: process.env.DISTRIBUTION_ADDRESS,
+    distributionAddress: contractAddresses.distributionAddress,
     mneumonic: process.env.MNEUMONIC,
     claimUrl: process.env.CLAIM_URL
 }

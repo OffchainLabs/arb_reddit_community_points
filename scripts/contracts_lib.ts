@@ -79,3 +79,20 @@ export const generateSignature = async (
 export const batchMint = (data: string) => {
     DistributionsContract.batchMint(data);
 };
+
+const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
+    const lastClamedRound: utils.BigNumber = await  DistributionsContract.claimableRounds(address)
+    return lastClamedRound.lte(lastRound)
+}
+
+export const generateResponse = async (address: string)=>{
+    const lastRound = await getLastRound()
+    const userCanClaim = await canClaim(address, lastRound)
+    if (!userCanClaim){
+        return "Looks like you've already claimed your coins this round; try again next round!"
+    }
+    const sig = await generateSignature(address, lastRound)
+
+    return `Request approved! Click here to claim your coins: ${process.env.CLAIM_URL}${lastRound}/${address}/${sig}`
+
+}

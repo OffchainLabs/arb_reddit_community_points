@@ -1,6 +1,0 @@
-node_modules
-dist
-.env
-yarn-debug.log*
-yarn-error.log*
-.DS_Store

@@ -1,6 +1,6 @@
 import { startStream, reply } from './twitter'
 import { ethers } from 'ethers'
-import { generateResponse } from './Distribution'
+import { generateResponse } from '../contracts_lib'
 
 startStream( async (tweet)=> {
     console.info(tweet && `incoming tweet: ${tweet.text}`);
