@@ -17,6 +17,7 @@ import {
     HashRouter,
     BrowserRouter,
     useRouteMatch,
+    useLocation
 } from "react-router-dom";
 import LandingScreen from "./components/LandingScreen";
 // import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
@@ -45,7 +46,7 @@ function App({ ethProvider }: AppProps) {
 
     const [currentRound, setCurrentRound] = useState(0);
     const [userCanClaim, setUserCanClaim] = useState(ClaimStatus.LOADING);
-
+    const location = useLocation();
     useEffect(() => {
         if (!DistributionContract || !walletAddress) return;
         DistributionContract.lastRound().then((round: utils.BigNumber) => {
@@ -67,7 +68,7 @@ function App({ ethProvider }: AppProps) {
                 }
             );
         });
-    }, [DistributionContract, walletAddress]);
+    }, [DistributionContract, walletAddress, location.pathname]);
 
     const [tokenSymbol, setTokenSymbol] = useState("");
     const [tokenName, setTokenName] = useState("");
