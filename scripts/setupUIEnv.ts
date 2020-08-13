@@ -14,7 +14,7 @@ fs.writeFileSync('ui/.env',
 [
     `REACT_APP_LOCAL_VALIDATOR_URL=${process.env.ARB_PROVIDER_URL}`,
     `REACT_APP_DISTRIBUTION_CONTRACT_ADDRESS=${contractAddresses.distributionAddress}`,
-    `REACT_APP_POINTS_CONTRACT_ADDRESS=${contractAddresses.subscriptionsAddress}`
+    `REACT_APP_POINTS_CONTRACT_ADDRESS=${contractAddresses.pointsAddress}`
 ].join('\n')
 , 'utf-8');
 

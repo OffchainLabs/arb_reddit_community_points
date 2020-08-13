@@ -93,6 +93,6 @@ export const generateResponse = async (address: string)=>{
     }
     const sig = await generateSignature(address, lastRound)
 
-    return `Request approved! Click here to claim your coins: ${process.env.CLAIM_URL}${lastRound}/${address}/${sig}`
+    return `Request approved! Click here to claim your coins: ${process.env.CLAIM_URL}/${lastRound}/${address}/${sig}`
 
 }

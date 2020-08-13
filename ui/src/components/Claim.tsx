@@ -77,6 +77,7 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
       return ReadyState.InvalidSignature;
     } else if (currentRound !== +round) {
       return ReadyState.InvalidRound;
+      // todo: check if claimable
     } else {
       return ReadyState.Valid;
     }
@@ -85,7 +86,7 @@ const Claim = ({ match, walletAddress, claim, currentRound }: ClaimProps) => {
   const claimCoins = useCallback(() => {
     if (!claim || readyState !== ReadyState.Valid) return;
     // TODO: karma constant
-    claim(round, address, 20, sig);
+    claim(round, address, 1000, sig);
   }, [claim, readyState]);
 
   const render = (readyState: ReadyState) => {
