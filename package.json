@@ -5,17 +5,34 @@
   "license": "Apache-2.0",
   "private": true,
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
     "arb-ethers-web3-bridge": "^0.7.3",
     "arb-provider-ethers": "^0.6.5",
     "ethers": "^4.0.44",
     "file-loader": "^5.0.2",
     "truffle": "^5.1.37"
   },
+  "scripts": {
+    "deploy": "truffle migrate --network arbitrum --reset",
+    "benchmarks": "tsc && node dist/scripts/benchmarks.js",
+    "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
+    "burn_test": "tsc && node dist/scripts/burnTest.js",
+    "batchmint": "tsc node dist/scripts/batch-reddit-test.js"
+  },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
+    "@types/assert": "^1.5.1",
     "arb-provider-ethers": "^0.6.5",
+    "chalk": "^4.1.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.6.0",
     "ethers": "^4.0.44",
+    "fs": "^0.0.1-security",
     "node-fetch": "^2.6.0",
+    "prettier": "^2.0.5",
+    "tslint": "^6.1.3",
+    "typescript": "^3.9.7",
     "web3": "~1.2.6"
   },
   "workspaces": {

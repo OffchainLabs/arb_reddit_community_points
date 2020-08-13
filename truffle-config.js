@@ -1,7 +1,10 @@
 const wrapProvider = require('arb-ethers-web3-bridge').wrapProvider
 const HDWalletProvider = require('@truffle/hdwallet-provider')
-const mnemonic =
-  'surge ability together fruit retire harvest release turkey social coffee owner uphold panel group car'
+require('dotenv').config()
+
+const mnemonic = process.env.MNEUMONIC
+const arbProviderUrl= process.env.ARB_PROVIDER_URL
+  
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -15,7 +18,7 @@ module.exports = {
     arbitrum: {
       provider: function () {
         return wrapProvider(
-          new HDWalletProvider(mnemonic, 'http://127.0.0.1:8547/')
+          new HDWalletProvider(mnemonic, arbProviderUrl)
         )
       },
       network_id: '*', // Match any network id
