@@ -38,6 +38,16 @@ const Content = (): any => {
                     onClick={() => window.open("/#/ui", "_blank")}
                 />
             </Grid>
+            <Grid item>
+                <Card
+                    title="Ethereum / Arbitrum Bridge"
+                    subheader="Live on testnet"
+                    secondaryText="Transfer Assets between L1 and L2"
+                    expandedText="The Token bridge interface lets you move your Ether, tokens, NFTs between the Ethereum chain and the Arbitrum Rollup Chain."
+                    imageUrl={img}
+                    onClick={() => window.open("https://www.qqq.com/", "_blank")}
+                />
+            </Grid>
         </Grid>
     );
 };
