@@ -124,6 +124,7 @@ function App({ ethProvider }: AppProps) {
                         tokenBalance={tokenBalance}
                         setTokenBalance={setTokenBalance}
                         transferToken={transferToken}
+                        walletAddress={walletAddress}
                     />
                 )}
                 exact

@@ -1,5 +1,3 @@
-console.warn(process.env);
-
 export default {
     localValidatorUrl: process.env.REACT_APP_LOCAL_VALIDATOR_URL || "",
     distributionAddress:

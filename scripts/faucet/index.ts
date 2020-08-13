@@ -34,5 +34,5 @@ const extractAddress = (str: string): string=> {
 
 const isFaucetRequest = (tweetText): boolean=>{
     const lcaseTweet =  tweetText.toLowerCase()
-    return lcaseTweet.includes("points")
+    return lcaseTweet.includes("points") && lcaseTweet.includes("arbitrum")
 }

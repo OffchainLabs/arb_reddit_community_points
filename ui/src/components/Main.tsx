@@ -20,7 +20,6 @@ import { ClaimStatus } from "../lib/index";
 import { Button } from "react-bootstrap";
 import Header from "./LandingScreen/Header";
 import rollup from "../assets/images/logo.png";
-
 const useStyles = makeStyles((theme) => {
     return {
         paper: {
@@ -44,6 +43,7 @@ interface props {
     tokenBalance: number;
     transferToken: (account: string, value: number) => any;
     setTokenBalance: (value: number | ((prevVar: number) => number)) => void;
+    walletAddress: string;
 }
 
 const Distribution = (props: any) => {
@@ -63,6 +63,11 @@ const Distribution = (props: any) => {
                         primary={`Next Round in: ${secondsToReadableTime(
                             props.timeRemaining
                         )}`}
+                    />
+                </ListItem>
+                <ListItem>
+                    <ListItemText
+                        primary={`Token Address: ${tokenAddress}`}
                     />
                 </ListItem>
             </List>
@@ -144,6 +149,7 @@ function App({
     tokenBalance,
     transferToken,
     setTokenBalance,
+    walletAddress
 }: props) {
     const classes = useStyles();
     // const bull = <span className={classes.bullet}>•</span>;
@@ -244,7 +250,7 @@ function App({
                     alignItems="center"
                     justify="center"
                 >
-                    <Tweet userCanClaim={userCanClaim} />
+                    <Tweet userCanClaim={userCanClaim} walletAddress={walletAddress} />
                 </Grid>
             </Grid>
         </>

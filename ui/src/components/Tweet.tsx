@@ -24,10 +24,11 @@ const useStyle = makeStyles((theme) => {
 
 interface tweetProps {
     userCanClaim: ClaimStatus;
+    walletAddress: string;
 }
-const TweetButton = ({ userCanClaim }: tweetProps) => {
+const TweetButton = ({ userCanClaim, walletAddress }: tweetProps) => {
     const classes = useStyle();
-    const text = `Gimmie tokens`.split(" ").join("%20");
+    const text = `Requesting tokens for Arbitrum Reddit Community Points Demo: ${walletAddress}`.split(" ").join("%20");
 
     const handleClick = (e: any) => {
         e.preventDefault();
