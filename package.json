@@ -14,11 +14,13 @@
     "truffle": "^5.1.37"
   },
   "scripts": {
-    "deploy": "truffle migrate --network arbitrum --reset",
+    "deploy": "truffle migrate --network arbitrum --reset && yarn run setup_ui_env",
     "benchmarks": "tsc && node dist/scripts/benchmarks.js",
     "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
     "burn_test": "tsc && node dist/scripts/burnTest.js",
-    "batchmint": "tsc node dist/scripts/batch-reddit-test.js"
+    "batchmint": "tsc && node dist/scripts/batch-reddit-test.js",
+    "ui_dev": "cd ui && yarn start",
+    "setup_ui_env": "tsc && node dist/scripts/setupUIEnv.js"
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
