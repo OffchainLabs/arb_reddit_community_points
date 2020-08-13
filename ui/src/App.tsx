@@ -17,7 +17,7 @@ import {
     HashRouter,
     BrowserRouter,
     useRouteMatch,
-    useLocation
+    useLocation,
 } from "react-router-dom";
 import LandingScreen from "./components/LandingScreen";
 // import { ArbErc20Factory } from 'arb-provider-ethers/dist/lib/abi/ArbErc20Factory'
