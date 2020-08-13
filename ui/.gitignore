@@ -22,3 +22,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
+src/abis/Distributions_v0.json
+src/abis/SubredditPoints_v0.json

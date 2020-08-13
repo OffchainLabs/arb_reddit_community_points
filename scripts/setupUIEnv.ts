@@ -18,4 +18,13 @@ fs.writeFileSync('ui/.env',
 ].join('\n')
 , 'utf-8');
 
-console.info('Generated frontend env file at ui/.env')
+
+
+fs.copyFile('build/contracts/SubredditPoints_v0.json', 'ui/src/abis/SubredditPoints_v0.json', (err)=>{
+    if (err) throw err;
+    fs.copyFile('build/contracts/Distributions_v0.json', 'ui/src/abis/Distributions_v0.json', (err)=>{
+        if (err) throw err;
+        console.info('Generated frontend env file at ui/.env and contract build files at ui/src/abis')
+
+    });
+});
