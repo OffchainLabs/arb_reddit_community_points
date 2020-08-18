@@ -1,9 +1,14 @@
 # Arb-Reddit Points Benchmarks
 
-## Setup
+### Setup
 
 - [Launch arb validator](https://developer.offchainlabs.com/docs/Developer_Quickstart/)
 - Add env variables to .env files; to use sample values, run `cp .env.sample .env`
 - Install dependencies: `yarn install`
 - Deploy contracts: `yarn run deploy`
+
+
+### Dev actions
 - Run benchmarks: `yarn run benchmarks`
+- Launch UI: `yarn run ui_dev`
+- Generate "request tokens" twitter response `yarn run generate_response 0xyouraddresss` (outputts url to toking claiming route in UI)
