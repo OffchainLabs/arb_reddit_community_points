@@ -77,7 +77,7 @@ export const printTotalGasUsed = async (
 const printL1GasUsed = async (
     startBlockHeight: number,
     endBlockHeight: number,
-    next?: () => any
+    next?: (success?: boolean) => any
 ) => {
     const inbox = await l1Bridge.globalInboxConn();
     const { MessageDeliveredFromOrigin } = inbox.interface.events;
@@ -102,7 +102,7 @@ const printL1GasUsed = async (
         )
     );
     console.info("");
-    next && next();
+    next && next(true);
 };
 
 const randomSignedClaim = async () => {

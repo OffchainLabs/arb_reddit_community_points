@@ -18,6 +18,9 @@ export const batchMint = (next?: () => any) => {
         }
         files.reverse();
 
+        let successes = [];
+        let failures = [];
+
         const batchMintRec = async (index = 0) => {
             let file = files[index];
             // skip fortnight files:
@@ -26,7 +29,13 @@ export const batchMint = (next?: () => any) => {
                 file = files[index];
             }
             if (!file) {
-                console.info("done batch minting");
+                console.info("Done batch minting:");
+                console.info(chalk.green(`${successes.length} successful mints:`))
+                console.info(chalk.green(successes.join(",")))
+
+                console.info(chalk.red(`${failures.length} failures:`))
+                console.info(chalk.red(failures.join(",")))
+
                 next && next();
             }
             let binaryData = fs.readFileSync(dirPath + file);
@@ -39,7 +48,12 @@ export const batchMint = (next?: () => any) => {
                 }
             );
 
-            printTotalGasUsed([minting], () => {
+            printTotalGasUsed([minting], (success?: boolean) => {
+                if (success) {
+                    successes.push(file)
+                } else {
+                    failures.push(file)
+                }
                 batchMintRec(index + 1);
             });
         };
