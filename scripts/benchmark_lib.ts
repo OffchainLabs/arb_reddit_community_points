@@ -192,7 +192,7 @@ export const setup = async () => {
         );
     }
     console.info("");
-    updates.initialBlockHeight = await l1Provider.getBlockNumber();
+    updates.initialBlockHeight = await l1Provider.getBlockNumber() + 1;
 };
 export const batchTransfers = async (count: number, next?: () => any) => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
