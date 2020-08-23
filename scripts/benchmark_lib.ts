@@ -44,40 +44,29 @@ const updates = {
 
 export const printTotalGasUsed = async (
     txnResponses: Promise<TransactionResponse>[],
-    next?: () => any
 ) => {
-    const startBlock = await l1Provider.getBlockNumber();
+    try {
+        const startBlock = await l1Provider.getBlockNumber();
+        let responses = await Promise.all(txnResponses)
+        let receipts = await Promise.all(responses.map((res) => res.wait()))
+        const totalGasUsed = receipts.reduce(
+            (acc, current) => acc.add(current.gasUsed),
+            new BigNumber(0)
+        );
+        console.log(chalk.green(`Used ${totalGasUsed} ArbGas`));
 
-    Promise.all(txnResponses)
-        .then((responses) => {
-            const receiptPromises = responses.map((res) => res.wait());
-            Promise.all(receiptPromises)
-                .then(async (receipts) => {
-                    const totalGasUsed = receipts.reduce(
-                        (acc, current) => acc.add(current.gasUsed),
-                        new BigNumber(0)
-                    );
-                    console.log(chalk.green(`Used ${totalGasUsed} ArbGas`));
+        const endBlock = await l1Provider.getBlockNumber();
 
-                    const endBlock = await l1Provider.getBlockNumber();
-
-                    printL1GasUsed(startBlock + 1, endBlock, next);
-                })
-                .catch((err) => {
-                    console.warn("error getting receipts", err);
-                    next && next();
-                });
-        })
-        .catch((err) => {
-            console.warn(chalk.red("error getting txn responses", err));
-            next && next();
-        });
+        printL1GasUsed(startBlock + 1, endBlock);
+        return receipts
+    } catch(err) {
+        console.warn(chalk.red("error getting txn responses", err));
+    }
 };
 
 const printL1GasUsed = async (
     startBlockHeight: number,
     endBlockHeight: number,
-    next?: (success?: boolean) => any
 ) => {
     const inbox = await l1Bridge.globalInboxConn();
     const { MessageDeliveredFromOrigin } = inbox.interface.events;
@@ -102,7 +91,6 @@ const printL1GasUsed = async (
         )
     );
     console.info("");
-    next && next(true);
 };
 
 const randomSignedClaim = async () => {
@@ -133,10 +121,10 @@ export const batchClaims = async (count: number, next?: () => any) => {
         );
         txCount++;
     }
-    printTotalGasUsed(claims, next);
+    return printTotalGasUsed(claims);
 };
 
-export const batchSubscribes = async (count: number, next?: () => any) => {
+export const batchSubscribes = async (count: number) => {
     console.info(chalk.blue(`broadcasting ${count} subscribes...`));
     updates.subscribes.count = new BigNumber(count);
     let txCount = await arbWallet.getTransactionCount();
@@ -149,7 +137,7 @@ export const batchSubscribes = async (count: number, next?: () => any) => {
         );
         txCount++;
     }
-    printTotalGasUsed(subscribes, next);
+    return printTotalGasUsed(subscribes);
 };
 
 export const setup = async () => {
@@ -194,7 +182,7 @@ export const setup = async () => {
     console.info("");
     updates.initialBlockHeight = await l1Provider.getBlockNumber() + 1;
 };
-export const batchTransfers = async (count: number, next?: () => any) => {
+export const batchTransfers = async (count: number) => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
     updates.transfers.count = new BigNumber(count);
     let txCount = await arbWallet.getTransactionCount();
@@ -209,10 +197,10 @@ export const batchTransfers = async (count: number, next?: () => any) => {
         );
         txCount++;
     }
-    printTotalGasUsed(transfers, next);
+    return printTotalGasUsed(transfers);
 };
 
-export const batchBurns = async (count: number, next?: () => any) => {
+export const batchBurns = async (count: number) => {
     updates.burns.count = new BigNumber(count);
     console.info(chalk.blue(`broadcasting ${count} burns...`));
     let txCount = await arbWallet.getTransactionCount();
@@ -223,7 +211,7 @@ export const batchBurns = async (count: number, next?: () => any) => {
         );
         txCount++;
     }
-    printTotalGasUsed(burns, next);
+    return printTotalGasUsed(burns);
 };
 
 export const verifyUpdates = async () => {

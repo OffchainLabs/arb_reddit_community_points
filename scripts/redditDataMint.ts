@@ -8,55 +8,39 @@ const chalk = require("chalk");
 
 const dirPath = "scripts/reddit-data/";
 
-export const batchMint = (next?: () => any) => {
+export const batchMint = async () => {
     console.info(chalk.blue("Batch-minting reddit data..."));
 
-    fs.readdir(dirPath, async (err, files) => {
-        if (err) {
-            console.error("Coult not load files:", err);
-            process.exit(1);
+    const files = fs.readdirSync(dirPath)
+
+    let successes = [];
+    let failures = [];
+    for (let file of files) {
+        if (file.startsWith("FortNiteBR")) {
+            break
         }
-        files.reverse();
-
-        let successes = [];
-        let failures = [];
-
-        const batchMintRec = async (index = 0) => {
-            let file = files[index];
-            // skip fortnight files:
-            while (file && file.startsWith("FortNiteBR")) {
-                index++;
-                file = files[index];
+        let binaryData = fs.readFileSync(dirPath + file);
+        const bytes = binaryData.toString().length;
+        console.info(chalk.grey(`minting ${file}, ${bytes} bytes:`));
+        const minting = DistributionsContract.batchMint(
+            "0x" + binaryData.toString("hex"),
+            {
+                gasLimit: new utils.BigNumber(1000000000000),
             }
-            if (!file) {
-                console.info("Done batch minting:");
-                console.info(chalk.green(`${successes.length} successful mints:`))
-                console.info(chalk.green(successes.join(",")))
+        );
 
-                console.info(chalk.red(`${failures.length} failures:`))
-                console.info(chalk.red(failures.join(",")))
+        let [receipt] = await printTotalGasUsed([minting])
 
-                next && next();
-            }
-            let binaryData = fs.readFileSync(dirPath + file);
-            const bytes = binaryData.toString().length;
-            console.info(chalk.grey(`minting ${file}, ${bytes} bytes:`));
-            const minting = DistributionsContract.batchMint(
-                "0x" + binaryData.toString("hex"),
-                {
-                    gasLimit: new utils.BigNumber(1000000000000),
-                }
-            );
+        if (receipt.status == 1) {
+            successes.push(file)
+        } else {
+            failures.push(file)
+        }
+    }
+    console.info("Done batch minting:");
+    console.info(chalk.green(`${successes.length} successful mints:`))
+    console.info(chalk.green(successes.join(",")))
 
-            printTotalGasUsed([minting], (success?: boolean) => {
-                if (success) {
-                    successes.push(file)
-                } else {
-                    failures.push(file)
-                }
-                batchMintRec(index + 1);
-            });
-        };
-        batchMintRec();
-    });
+    console.info(chalk.red(`${failures.length} failures:`))
+    console.info(chalk.red(failures.join(",")))
 };

@@ -20,11 +20,9 @@ const chalk = require("chalk");
     console.info(chalk.blue("*** Running benchmarks ***"));
     console.info("");
 
-    batchTransfers(20, () => {
-        batchBurns(20, () => {
-            batchClaims(20, () => {
-                batchSubscribes(20, verifyUpdates);
-            });
-        });
-    });
+    await batchTransfers(20);
+    await batchBurns(20);
+    await batchClaims(20);
+    await batchSubscribes(20);
+    await verifyUpdates();
 })();
