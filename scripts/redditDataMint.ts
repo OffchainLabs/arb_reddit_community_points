@@ -22,7 +22,7 @@ export const batchMint = async () => {
         let binaryData = fs.readFileSync(dirPath + file);
         const bytes = binaryData.toString().length;
         console.info(chalk.grey(`minting ${file}, ${bytes} bytes:`));
-        const minting = DistributionsContract.batchMint(
+        const minting = await DistributionsContract.batchMint(
             "0x" + binaryData.toString("hex"),
             {
                 gasLimit: new utils.BigNumber(1000000000000),

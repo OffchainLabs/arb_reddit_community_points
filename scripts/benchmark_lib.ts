@@ -68,7 +68,7 @@ const printL1GasUsed = async (
     startBlockHeight: number,
     endBlockHeight: number,
 ) => {
-    const inbox = await l1Bridge.globalInboxConn();
+    const inbox = await l1Bridge.globalInbox();
     const { MessageDeliveredFromOrigin } = inbox.interface.events;
     const topics = [MessageDeliveredFromOrigin.topic];
     const logs = await l1Provider.getLogs({

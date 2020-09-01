@@ -9,13 +9,12 @@
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
     "arb-ethers-web3-bridge": "^0.7.3",
-    "arb-provider-ethers": "^0.6.5",
     "ethers": "^4.0.44",
     "file-loader": "^5.0.2",
     "truffle": "^5.1.37"
   },
   "scripts": {
-    "deploy": "truffle migrate --network arbitrum --reset && yarn run setup_ui_env",
+    "deploy": "truffle migrate --network arbitrum && yarn run setup_ui_env",
     "benchmarks": "tsc && node dist/scripts/benchmarks.js",
     "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
     "burn_test": "tsc && node dist/scripts/burnTest.js",
@@ -25,12 +24,11 @@
     "start_twitter": "tsc && node dist/scripts/faucet/index.js",
     "generate_response": "tsc && node dist/scripts/faucet/scripts/generate_response.js",
     "advance_round": "tsc && node dist/scripts/faucet/scripts/advance_round.js"
-
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.0.40",
     "@types/assert": "^1.5.1",
-    "arb-provider-ethers": "^0.6.5",
+    "arb-provider-ethers": "^0.7.0",
     "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.6.0",
