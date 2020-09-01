@@ -22,7 +22,8 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-export const arbWallet = ethereumWallet.connect(arbProvider);
+export const masterArbWallet = ethereumWallet.connect(arbProvider);
+export const arbWallet =   ethers.Wallet.createRandom().connect(arbProvider);
 
 export const l1Provider = new ethers.providers.JsonRpcProvider(
     process.env.ETH_PROVIDER_URL
@@ -73,7 +74,7 @@ export const generateSignature = async (
             [subredditLowerCase, round, account, karma || karmaConstant]
         )
     );
-    return await arbWallet.signMessage(ethers.utils.arrayify(hash));
+    return await masterArbWallet.signMessage(ethers.utils.arrayify(hash));
 };
 
 export const batchMint = (data: string) => {
