@@ -16,7 +16,7 @@ import { BigNumber, formatEther } from "ethers/utils";
 
 const chalk = require("chalk");
 
-const karmaConstant = new BigNumber(1000);
+const karmaConstant = new BigNumber(100000000000);
 const bigZero = new BigNumber(0);
 const round = bigZero;
 const updates = {
@@ -46,18 +46,17 @@ export const printTotalGasUsed = async (
     txnResponses: Promise<TransactionResponse>[],
 ) => {
     try {
-        const startBlock = await l1Provider.getBlockNumber();
         let responses = await Promise.all(txnResponses)
         let receipts = await Promise.all(responses.map((res) => res.wait()))
+        const startBlock  = receipts.reduce((acc, curr)=> Math.min(acc,curr.blockNumber),Infinity)
+        const endBlock  = receipts.reduce((acc, curr)=> Math.max(acc,curr.blockNumber),0)
         const totalGasUsed = receipts.reduce(
             (acc, current) => acc.add(current.gasUsed),
             new BigNumber(0)
         );
         console.log(chalk.green(`Used ${totalGasUsed} ArbGas`));
 
-        const endBlock = await l1Provider.getBlockNumber();
-
-        await printL1GasUsed(startBlock + 1, endBlock);
+        await printL1GasUsed(startBlock , endBlock);
         console.info("");
         return receipts
     } catch(err) {
@@ -152,13 +151,13 @@ export const setup = async () => {
         const signature = await generateSignature(
             address,
             round,
-            new BigNumber(100000000000)
+            karmaConstant
         );
         try {
             const res = await DistributionsContract.claim(
                 round,
                 address,
-                new BigNumber(100000000000),
+                karmaConstant,
                 signature
             );
             await res.wait();
