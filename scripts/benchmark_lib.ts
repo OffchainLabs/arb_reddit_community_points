@@ -57,7 +57,8 @@ export const printTotalGasUsed = async (
 
         const endBlock = await l1Provider.getBlockNumber();
 
-        printL1GasUsed(startBlock + 1, endBlock);
+        await printL1GasUsed(startBlock + 1, endBlock);
+        console.info("");
         return receipts
     } catch(err) {
         console.warn(chalk.red("error getting txn responses", err));
@@ -90,7 +91,6 @@ const printL1GasUsed = async (
             }`
         )
     );
-    console.info("");
 };
 
 const randomSignedClaim = async () => {

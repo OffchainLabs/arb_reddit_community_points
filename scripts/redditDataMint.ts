@@ -10,6 +10,7 @@ const dirPath = "scripts/reddit-data/";
 
 export const batchMint = async () => {
     console.info(chalk.blue("Batch-minting reddit data..."));
+    console.info("");
 
     const files = fs.readdirSync(dirPath)
 
