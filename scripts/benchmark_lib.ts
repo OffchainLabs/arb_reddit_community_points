@@ -8,7 +8,7 @@ import {
     getLastRound,
     l1Provider,
     l1Bridge,
-    arbProvider,
+    arbProvider
 } from "./contracts_lib";
 import { ethers, Wallet } from "ethers";
 import { TransactionResponse, Log } from "ethers/providers";
@@ -24,7 +24,7 @@ const updates = {
     initialMainBalance: bigZero,
     claims: {
         claimedAddresses: [],
-        value: new BigNumber(1000),
+        value: karmaConstant,
         count: bigZero,
     },
     transfers: {
