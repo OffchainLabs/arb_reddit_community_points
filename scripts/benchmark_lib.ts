@@ -82,6 +82,7 @@ const printL1GasUsed = async (
         const log = logs[i];
         const txnResp = await l1Provider.getTransaction(log.transactionHash);
         const txnReceipt = await txnResp.wait();
+        console.info(chalk.green(`Make L1 aggregator tx`, log.transactionHash))
         totalGasUsed = totalGasUsed.add(txnReceipt.gasUsed);
     }
     console.info(
@@ -151,13 +152,13 @@ export const setup = async () => {
         const signature = await generateSignature(
             address,
             round,
-            karmaConstant
+            new BigNumber(100000000000)
         );
         try {
             const res = await DistributionsContract.claim(
                 round,
                 address,
-                karmaConstant,
+                new BigNumber(100000000000),
                 signature
             );
             await res.wait();
@@ -191,7 +192,7 @@ export const batchTransfers = async (count: number) => {
         const rec = Wallet.createRandom().address;
         updates.transfers.recipientAddresses.push(rec);
         transfers.push(
-            PointsContract.transfer(rec, updates.transfers.value, {
+            await PointsContract.transfer(rec, updates.transfers.value, {
                 nonce: txCount,
             })
         );
