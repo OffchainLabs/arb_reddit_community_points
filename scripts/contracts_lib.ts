@@ -81,6 +81,11 @@ export const batchMint = (data: string) => {
     DistributionsContract.batchMint(data);
 };
 
+export const authorizeOp = async () =>{
+    const txn = await PointsContract.authorizeOperator(contractAddresses.subscriptionsAddress)
+    await txn.wait()
+}
+
 const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
     const lastClamedRound: utils.BigNumber = await  DistributionsContract.claimableRounds(address)
     return lastClamedRound.lte(lastRound)

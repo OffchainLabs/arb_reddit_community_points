@@ -8,7 +8,8 @@ import {
     getLastRound,
     l1Provider,
     l1Bridge,
-    arbProvider
+    arbProvider,
+    authorizeOp
 } from "./contracts_lib";
 import { ethers, Wallet } from "ethers";
 import { TransactionResponse, Log } from "ethers/providers";
@@ -143,6 +144,7 @@ export const batchSubscribes = async (count: number) => {
 export const setup = async () => {
     console.info("");
     console.info(chalk.blue("initializing..."));
+    await authorizeOp()
     const { address } = arbWallet;
     const bal = await PointsContract.balanceOf(address);
 
