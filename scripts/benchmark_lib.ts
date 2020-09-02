@@ -135,7 +135,7 @@ export const batchSubscribes = async (conn: ContractConnection, count: number): 
         );
         txCount++;
     }
-    return printTotalGasUsed(subscribes);
+    return subscribes;
 };
 
 export const setup = async (conn: ContractConnection) => {
@@ -143,6 +143,10 @@ export const setup = async (conn: ContractConnection) => {
     console.info(chalk.blue("initializing..."));
     const { address } = conn.arbWallet;
     const bal = await conn.PointsContract.balanceOf(address);
+
+    // authorize subscriptions contract for subscribes:
+    const tx = await conn.PointsContract.authorizeOperator(conn.SubscriptionsContract.address)
+    await tx.wait()
 
     if (bal.isZero()) {
         console.info(chalk.blue("Transfering tokens to main account..."));
