@@ -38,13 +38,12 @@ const updates = {
 };
 
 export const printTotalGasUsed = async (
-    txnResponses: Promise<TransactionResponse>[],
+    txHashes: string[]
 ) => {
     try {
-        let responses = await Promise.all(txnResponses)
         let receipts = []
-        for (let i = 0; i < responses.length; i++) {
-            receipts.push(await responses[i].wait())
+        for (let i = 0; i < txHashes.length; i++) {
+            receipts.push(await arbProvider.waitForTransaction(txHashes[i]))
         }
         const startBlock  = receipts.reduce((acc, curr)=> Math.min(acc,curr.blockNumber),Infinity)
         const endBlock  = receipts.reduce((acc, curr)=> Math.max(acc,curr.blockNumber),0)
@@ -101,7 +100,7 @@ const randomSignedClaim = async () => {
     };
 };
 
-export const batchClaims = async (conn: ContractConnection, count: number) => {
+export const batchClaims = async (conn: ContractConnection, count: number): Promise<string[]> => {
     console.info(chalk.blue(`broadcasting ${count} claims...`));
     updates.claims.count = new BigNumber(count);
     let txCount = await conn.arbWallet.getTransactionCount();
@@ -110,29 +109,29 @@ export const batchClaims = async (conn: ContractConnection, count: number) => {
         const signedClaim = await randomSignedClaim();
         updates.claims.claimedAddresses.push(signedClaim.address);
         claims.push(
-            conn.DistributionsContract.claim(
+            (await conn.DistributionsContract.claim(
                 round,
                 signedClaim.address,
                 karmaConstant,
                 signedClaim.signature,
                 { nonce: txCount }
-            )
+            )).hash
         );
         txCount++;
     }
     return printTotalGasUsed(claims);
 };
 
-export const batchSubscribes = async (conn: ContractConnection, count: number) => {
+export const batchSubscribes = async (conn: ContractConnection, count: number): Promise<string[]> => {
     console.info(chalk.blue(`broadcasting ${count} subscribes...`));
     updates.subscribes.count = new BigNumber(count);
     let txCount = await conn.arbWallet.getTransactionCount();
     const subscribes = [];
     for (let i = 0; i < count; i++) {
         subscribes.push(
-            conn.SubscriptionsContract.subscribe(conn.arbWallet.address, false, {
+            (await conn.SubscriptionsContract.subscribe(conn.arbWallet.address, false, {
                 nonce: txCount,
-            })
+            })).hash
         );
         txCount++;
     }
@@ -181,34 +180,34 @@ export const setup = async (conn: ContractConnection) => {
     console.info("");
     updates.initialBlockHeight = await l1Provider.getBlockNumber() + 1;
 };
-export const batchTransfers = async (conn: ContractConnection, count: number): Promise<ContractTransaction[]> => {
+export const batchTransfers = async (conn: ContractConnection, count: number): Promise<string[]> => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
     updates.transfers.count = new BigNumber(count);
     let txCount = await conn.arbWallet.getTransactionCount();
-    const transfers: ContractTransaction[] = [];
+    const transfers: string[] = [];
     for (let i = 0; i < count; i++) {
         const rec = Wallet.createRandom().address;
         updates.transfers.recipientAddresses.push(rec);
         transfers.push(
-            await conn.PointsContract.transfer(rec, updates.transfers.value, {
+            (await conn.PointsContract.transfer(rec, updates.transfers.value, {
                 nonce: txCount,
                 gasPrice: 0,
                 gasLimit: 150000,
-            })
+            })).hash
         );
         txCount++;
     }
     return transfers;
 };
 
-export const batchBurns = async (conn: ContractConnection, count: number) => {
+export const batchBurns = async (conn: ContractConnection, count: number): Promise<string[]> => {
     updates.burns.count = new BigNumber(count);
     console.info(chalk.blue(`broadcasting ${count} burns...`));
     let txCount = await conn.arbWallet.getTransactionCount();
     const burns = [];
     for (let i = 0; i < count; i++) {
         burns.push(
-            conn.PointsContract.burn(updates.burns.value, "0x", { nonce: txCount })
+            (await conn.PointsContract.burn(updates.burns.value, "0x", { nonce: txCount })).hash
         );
         txCount++;
     }

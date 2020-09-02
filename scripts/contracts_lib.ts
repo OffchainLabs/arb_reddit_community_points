@@ -20,7 +20,6 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
 
 // arbProvider.on("debug", (data: any) => console.log(data))
 
-// const ethereumWallet = new ethers.Wallet(env.privateKey, arbProvider);
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
@@ -92,8 +91,12 @@ export interface ContractConnection {
     PointsContract: Contract
 }
 
-export function generateConnection() : ContractConnection {
-    const arbWallet = ethers.Wallet.createRandom().connect(arbProvider);
+export function randomWallet(): ethers.Wallet {
+    return ethers.Wallet.createRandom()
+}
+
+export function generateConnection(wallet: ethers.Wallet) : ContractConnection {
+    const arbWallet = wallet.connect(arbProvider);
 
     const DistributionsContract = new Contract(
         contractAddresses.distributionAddress,

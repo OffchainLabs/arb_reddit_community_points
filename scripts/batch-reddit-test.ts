@@ -1,3 +1,3 @@
 import { batchMint } from "./redditDataMint";
-import { generateConnection } from './contracts_lib'
-batchMint(generateConnection());
+import { generateConnection, randomWallet } from './contracts_lib'
+batchMint(generateConnection(randomWallet()));

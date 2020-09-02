@@ -7,13 +7,14 @@ import {
     l1Provider,
     arbProvider,
     generateConnection,
+    randomWallet,
 } from "./contracts_lib";
 
 require("dotenv").config();
 const chalk = require("chalk");
 
 (async () => {
-    const conn = generateConnection()
+    const conn = generateConnection(randomWallet())
     const startBlock = await l1Provider.getBlockNumber();
     await setup(conn);
     const { Burned } = conn.PointsContract.interface.events;
