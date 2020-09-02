@@ -22,7 +22,7 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-export const masterArbWallet = ethereumWallet.connect(arbProvider);
+const masterArbWallet = ethereumWallet.connect(arbProvider);
 export const arbWallet =   ethers.Wallet.createRandom().connect(arbProvider);
 
 export const l1Provider = new ethers.providers.JsonRpcProvider(
@@ -49,7 +49,7 @@ export const PointsContract = new Contract(
     SubredditPoints_v0,
     arbWallet
 );
-export const getLastRound = async (): Promise<utils.BigNumber> => {
+const getLastRound = async (): Promise<utils.BigNumber> => {
     return await DistributionsContract.lastRound();
 };
 

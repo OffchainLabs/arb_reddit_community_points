@@ -5,7 +5,6 @@ import {
     PointsContract,
     SubscriptionsContract,
     batchMint,
-    getLastRound,
     l1Provider,
     l1Bridge,
     arbProvider

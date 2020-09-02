@@ -2,7 +2,7 @@ import fs from "fs";
 const readline = require("readline");
 import { utils } from "ethers";
 
-import { DistributionsContract, arbWallet } from "./contracts_lib";
+import { DistributionsContract } from "./contracts_lib";
 import { printTotalGasUsed } from "./benchmark_lib";
 const chalk = require("chalk");
 
