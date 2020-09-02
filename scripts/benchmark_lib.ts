@@ -5,7 +5,7 @@ import {
     arbProvider,
     ContractConnection
 } from "./contracts_lib";
-import { ethers, Wallet } from "ethers";
+import { ethers, Wallet, ContractTransaction } from "ethers";
 import { TransactionResponse, Log } from "ethers/providers";
 import { BigNumber, formatEther } from "ethers/utils";
 
@@ -42,7 +42,10 @@ export const printTotalGasUsed = async (
 ) => {
     try {
         let responses = await Promise.all(txnResponses)
-        let receipts = await Promise.all(responses.map((res) => res.wait()))
+        let receipts = []
+        for (let i = 0; i < responses.length; i++) {
+            receipts.push(await responses[i].wait())
+        }
         const startBlock  = receipts.reduce((acc, curr)=> Math.min(acc,curr.blockNumber),Infinity)
         const endBlock  = receipts.reduce((acc, curr)=> Math.max(acc,curr.blockNumber),0)
         const totalGasUsed = receipts.reduce(
@@ -56,6 +59,7 @@ export const printTotalGasUsed = async (
         return receipts
     } catch(err) {
         console.warn(chalk.red("error getting txn responses", err));
+        throw err
     }
 };
 
@@ -177,11 +181,11 @@ export const setup = async (conn: ContractConnection) => {
     console.info("");
     updates.initialBlockHeight = await l1Provider.getBlockNumber() + 1;
 };
-export const batchTransfers = async (conn: ContractConnection, count: number) => {
+export const batchTransfers = async (conn: ContractConnection, count: number): Promise<ContractTransaction[]> => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
     updates.transfers.count = new BigNumber(count);
     let txCount = await conn.arbWallet.getTransactionCount();
-    const transfers = [];
+    const transfers: ContractTransaction[] = [];
     for (let i = 0; i < count; i++) {
         const rec = Wallet.createRandom().address;
         updates.transfers.recipientAddresses.push(rec);
@@ -194,7 +198,7 @@ export const batchTransfers = async (conn: ContractConnection, count: number) =>
         );
         txCount++;
     }
-    return printTotalGasUsed(transfers);
+    return transfers;
 };
 
 export const batchBurns = async (conn: ContractConnection, count: number) => {

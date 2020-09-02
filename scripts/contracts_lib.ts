@@ -18,6 +18,8 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
     process.env.ARB_PROVIDER_URL
 );
 
+// arbProvider.on("debug", (data: any) => console.log(data))
+
 // const ethereumWallet = new ethers.Wallet(env.privateKey, arbProvider);
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);

@@ -5,6 +5,7 @@ import {
     setup,
     batchBurns,
     verifyUpdates,
+    printTotalGasUsed
 } from "./benchmark_lib";
 
 import { l1Provider, generateConnection, ContractConnection } from "./contracts_lib";
@@ -12,28 +13,33 @@ import { l1Provider, generateConnection, ContractConnection } from "./contracts_
 require("dotenv").config();
 const chalk = require("chalk");
 
+(async () => {
+    const startBlock = await l1Provider.getBlockNumber();
 
-async function runBatch() {
-    const conn = generateConnection()
-    await setup(conn);
+    const runCount = 5
+    let conns = []
+    let setups = []
+    for (let i = 0; i < runCount; i++) {
+        const conn = generateConnection()
+        setups.push(setup(conn));
+        conns.push(conn)
+    }
+
+    await Promise.all(setups)
 
     console.info("");
     console.info(chalk.blue("*** Running benchmarks ***"));
     console.info("");
 
     console.time("batchTransfers")
-    await batchTransfers(conn, 1000)
-    console.timeEnd("batchTransfers")
-}
-
-(async () => {
-    const startBlock = await l1Provider.getBlockNumber();
-
     let runs = []
-    for (let i = 0; i < 1; i++) {
-        runs.push(runBatch())
+    for (let i = 0; i < runCount; i++) {
+        runs.push(batchTransfers(conns[i], 1000))
     }
-    await Promise.all(runs)
+    const contractTxesGroups = await Promise.all(runs)
+    console.info(chalk.blue("*** All transactions sent to aggregator ***"))
+    await printTotalGasUsed([].concat(...contractTxesGroups))
+    console.timeEnd("batchTransfers")
     // await batchBurns(20);
     // await batchClaims(20);
     // await batchSubscribes(20);
