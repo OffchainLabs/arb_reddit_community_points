@@ -1,2 +1,3 @@
 import { batchMint } from "./redditDataMint";
-batchMint();
+import { generateConnection } from './contracts_lib'
+batchMint(generateConnection());

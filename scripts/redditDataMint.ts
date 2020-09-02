@@ -2,13 +2,13 @@ import fs from "fs";
 const readline = require("readline");
 import { utils } from "ethers";
 
-import { DistributionsContract } from "./contracts_lib";
+import { ContractConnection } from "./contracts_lib";
 import { printTotalGasUsed } from "./benchmark_lib";
 const chalk = require("chalk");
 
 const dirPath = "scripts/reddit-data/";
 
-export const batchMint = async () => {
+export const batchMint = async (conn: ContractConnection) => {
     console.info(chalk.blue("Batch-minting reddit data..."));
     console.info("");
 
@@ -23,7 +23,7 @@ export const batchMint = async () => {
         let binaryData = fs.readFileSync(dirPath + file);
         const bytes = binaryData.toString().length;
         console.info(chalk.grey(`minting ${file}, ${bytes} bytes:`));
-        const minting = await DistributionsContract.batchMint(
+        const minting = await conn.DistributionsContract.batchMint(
             "0x" + binaryData.toString("hex"),
             {
                 gasLimit: new utils.BigNumber(1000000000000),

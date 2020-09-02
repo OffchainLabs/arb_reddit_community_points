@@ -1,13 +1,9 @@
 import {
-    arbWallet,
     generateSignature,
-    DistributionsContract,
-    PointsContract,
-    SubscriptionsContract,
-    batchMint,
     l1Provider,
-    l1Bridge,
-    arbProvider
+    globalInbox,
+    arbProvider,
+    ContractConnection
 } from "./contracts_lib";
 import { ethers, Wallet } from "ethers";
 import { TransactionResponse, Log } from "ethers/providers";
@@ -67,7 +63,7 @@ const printL1GasUsed = async (
     startBlockHeight: number,
     endBlockHeight: number,
 ) => {
-    const inbox = await l1Bridge.globalInbox();
+    const inbox = await globalInbox;
     const { MessageDeliveredFromOrigin } = inbox.interface.events;
     const topics = [MessageDeliveredFromOrigin.topic];
     const logs = await l1Provider.getLogs({
@@ -101,16 +97,16 @@ const randomSignedClaim = async () => {
     };
 };
 
-export const batchClaims = async (count: number, next?: () => any) => {
+export const batchClaims = async (conn: ContractConnection, count: number) => {
     console.info(chalk.blue(`broadcasting ${count} claims...`));
     updates.claims.count = new BigNumber(count);
-    let txCount = await arbWallet.getTransactionCount();
+    let txCount = await conn.arbWallet.getTransactionCount();
     const claims = [];
     for (let i = 0; i < count; i++) {
         const signedClaim = await randomSignedClaim();
         updates.claims.claimedAddresses.push(signedClaim.address);
         claims.push(
-            DistributionsContract.claim(
+            conn.DistributionsContract.claim(
                 round,
                 signedClaim.address,
                 karmaConstant,
@@ -123,14 +119,14 @@ export const batchClaims = async (count: number, next?: () => any) => {
     return printTotalGasUsed(claims);
 };
 
-export const batchSubscribes = async (count: number) => {
+export const batchSubscribes = async (conn: ContractConnection, count: number) => {
     console.info(chalk.blue(`broadcasting ${count} subscribes...`));
     updates.subscribes.count = new BigNumber(count);
-    let txCount = await arbWallet.getTransactionCount();
+    let txCount = await conn.arbWallet.getTransactionCount();
     const subscribes = [];
     for (let i = 0; i < count; i++) {
         subscribes.push(
-            SubscriptionsContract.subscribe(arbWallet.address, false, {
+            conn.SubscriptionsContract.subscribe(conn.arbWallet.address, false, {
                 nonce: txCount,
             })
         );
@@ -139,11 +135,11 @@ export const batchSubscribes = async (count: number) => {
     return printTotalGasUsed(subscribes);
 };
 
-export const setup = async () => {
+export const setup = async (conn: ContractConnection) => {
     console.info("");
     console.info(chalk.blue("initializing..."));
-    const { address } = arbWallet;
-    const bal = await PointsContract.balanceOf(address);
+    const { address } = conn.arbWallet;
+    const bal = await conn.PointsContract.balanceOf(address);
 
     if (bal.isZero()) {
         console.info(chalk.blue("Transfering tokens to main account..."));
@@ -153,14 +149,14 @@ export const setup = async () => {
             karmaConstant
         );
         try {
-            const res = await DistributionsContract.claim(
+            const res = await conn.DistributionsContract.claim(
                 round,
                 address,
                 karmaConstant,
                 signature
             );
             await res.wait();
-            const bal = await PointsContract.balanceOf(address);
+            const bal = await conn.PointsContract.balanceOf(address);
             updates.initialMainBalance = bal;
             console.info(
                 chalk.green(
@@ -181,17 +177,19 @@ export const setup = async () => {
     console.info("");
     updates.initialBlockHeight = await l1Provider.getBlockNumber() + 1;
 };
-export const batchTransfers = async (count: number) => {
+export const batchTransfers = async (conn: ContractConnection, count: number) => {
     console.info(chalk.blue(`broadcasting ${count} transfers...`));
     updates.transfers.count = new BigNumber(count);
-    let txCount = await arbWallet.getTransactionCount();
+    let txCount = await conn.arbWallet.getTransactionCount();
     const transfers = [];
     for (let i = 0; i < count; i++) {
         const rec = Wallet.createRandom().address;
         updates.transfers.recipientAddresses.push(rec);
         transfers.push(
-            await PointsContract.transfer(rec, updates.transfers.value, {
+            await conn.PointsContract.transfer(rec, updates.transfers.value, {
                 nonce: txCount,
+                gasPrice: 0,
+                gasLimit: 150000,
             })
         );
         txCount++;
@@ -199,25 +197,25 @@ export const batchTransfers = async (count: number) => {
     return printTotalGasUsed(transfers);
 };
 
-export const batchBurns = async (count: number) => {
+export const batchBurns = async (conn: ContractConnection, count: number) => {
     updates.burns.count = new BigNumber(count);
     console.info(chalk.blue(`broadcasting ${count} burns...`));
-    let txCount = await arbWallet.getTransactionCount();
+    let txCount = await conn.arbWallet.getTransactionCount();
     const burns = [];
     for (let i = 0; i < count; i++) {
         burns.push(
-            PointsContract.burn(updates.burns.value, "0x", { nonce: txCount })
+            conn.PointsContract.burn(updates.burns.value, "0x", { nonce: txCount })
         );
         txCount++;
     }
     return printTotalGasUsed(burns);
 };
 
-export const verifyUpdates = async () => {
+export const verifyUpdates = async (conn: ContractConnection) => {
     console.info(chalk.blue("Verifying updates and events:"));
 
     const claimBalancePromises = updates.claims.claimedAddresses.map(
-        (address) => PointsContract.balanceOf(address)
+        (address) => conn.PointsContract.balanceOf(address)
     );
     Promise.all(claimBalancePromises).then((balances) => {
         outputResult(
@@ -228,7 +226,7 @@ export const verifyUpdates = async () => {
     });
 
     const transferBalancePromises = updates.transfers.recipientAddresses.map(
-        (address) => PointsContract.balanceOf(address)
+        (address) => conn.PointsContract.balanceOf(address)
     );
     Promise.all(transferBalancePromises).then((balances) => {
         outputResult(
@@ -238,8 +236,8 @@ export const verifyUpdates = async () => {
         );
     });
 
-    const { address } = arbWallet;
-    const newBal = await PointsContract.balanceOf(address);
+    const { address } = conn.arbWallet;
+    const newBal = await conn.PointsContract.balanceOf(address);
     const diff = updates.transfers.count
         .mul(updates.transfers.value)
         .add(updates.burns.count.mul(updates.burns.value))
@@ -250,9 +248,9 @@ export const verifyUpdates = async () => {
         "Error: Subscribes/burns unsuccessful"
     );
 
-    const { ClaimPoints } = DistributionsContract.interface.events;
-    const { Subscribed } = SubscriptionsContract.interface.events;
-    const { Transfer, Burned } = PointsContract.interface.events;
+    const { ClaimPoints } = conn.DistributionsContract.interface.events;
+    const { Subscribed } = conn.SubscriptionsContract.interface.events;
+    const { Transfer, Burned } = conn.PointsContract.interface.events;
 
     const claimLogs = await arbProvider.getLogs({
         fromBlock: updates.initialBlockHeight,
