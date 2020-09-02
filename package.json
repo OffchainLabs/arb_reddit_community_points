@@ -14,7 +14,7 @@
     "truffle": "^5.1.37"
   },
   "scripts": {
-    "deploy": "truffle migrate --network arbitrum && yarn run setup_ui_env",
+    "deploy": "truffle migrate --reset --network arbitrum && yarn run setup_ui_env",
     "benchmarks": "tsc && node dist/scripts/benchmarks.js",
     "format": "yarn run prettier --config-precedence file-override --write \"./scripts/**/*\"",
     "burn_test": "tsc && node dist/scripts/burnTest.js",
