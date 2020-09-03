@@ -3,7 +3,7 @@ import { ethers, Contract, utils } from "ethers";
 import { abi as Distributions_v0 } from "../build/contracts/Distributions_v0.json";
 import { abi as Subscriptions_v0 } from "../build/contracts/Subscriptions_v0.json";
 import { abi as SubredditPoints_v0 } from "../build/contracts/SubredditPoints_v0.json";
-import { L1Bridge } from "arb-provider-ethers";
+import { L1Bridge, abi } from "arb-provider-ethers";
 
 require("dotenv").config();
 
@@ -18,49 +18,36 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
     process.env.ARB_PROVIDER_URL
 );
 
-// const ethereumWallet = new ethers.Wallet(env.privateKey, arbProvider);
+// arbProvider.on("debug", (data: any) => console.log(data))
+
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-export const arbWallet = ethereumWallet.connect(arbProvider);
+const masterArbWallet = ethereumWallet.connect(arbProvider);
 
 export const l1Provider = new ethers.providers.JsonRpcProvider(
     process.env.ETH_PROVIDER_URL
 );
-const l1Wallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-const l1Signer = l1Wallet.connect(l1Provider);
+const arbRollup = abi.ArbRollupFactory.connect(process.env.ROLLUP_ADDRESS, l1Provider)
+export const globalInbox = (async () => {
+    const globalInboxAddress = await arbRollup.globalInbox()
+    return abi.GlobalInboxFactory.connect(
+        globalInboxAddress,
+        l1Provider
+    )
+})()
 
-export const l1Bridge = new L1Bridge(l1Signer, process.env.ROLLUP_ADDRESS);
-
-export const DistributionsContract = new Contract(
+export const MasterDistributionsContract = new Contract(
     contractAddresses.distributionAddress,
     Distributions_v0,
-    arbWallet
+    masterArbWallet
 );
-export const SubscriptionsContract = new Contract(
-    contractAddresses.subscriptionsAddress,
-    Subscriptions_v0,
-    arbWallet
-);
-export const PointsContract = new Contract(
-    contractAddresses.pointsAddress,
-    SubredditPoints_v0,
-    arbWallet
-);
-export const getLastRound = async (): Promise<utils.BigNumber> => {
-    return await DistributionsContract.lastRound();
-};
 
-export const advanceRound = async () => {
-    const currentRound = await getLastRound();
-    const res = await DistributionsContract.advanceToRound(
-        currentRound.add(1),
-        karmaConstant
-    );
-    res.wait();
-    return currentRound.add(1);
-};
+const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
+    const lastClamedRound: utils.BigNumber = await  MasterDistributionsContract.claimableRounds(address)
+    return lastClamedRound.lte(lastRound)
+}
 
 export const generateSignature = async (
     account: string,
@@ -73,20 +60,21 @@ export const generateSignature = async (
             [subredditLowerCase, round, account, karma || karmaConstant]
         )
     );
-    return await arbWallet.signMessage(ethers.utils.arrayify(hash));
+    return await masterArbWallet.signMessage(ethers.utils.arrayify(hash));
 };
 
-export const batchMint = (data: string) => {
-    DistributionsContract.batchMint(data);
+export const advanceRound = async () => {
+    const currentRound = await MasterDistributionsContract.lastRound();
+    const res = await MasterDistributionsContract.advanceToRound(
+        currentRound.add(1),
+        karmaConstant
+    );
+    res.wait();
+    return currentRound.add(1);
 };
-
-const canClaim = async (address: string, lastRound: utils.BigNumber) =>{
-    const lastClamedRound: utils.BigNumber = await  DistributionsContract.claimableRounds(address)
-    return lastClamedRound.lte(lastRound)
-}
 
 export const generateResponse = async (address: string)=>{
-    const lastRound = await getLastRound()
+    const lastRound = await MasterDistributionsContract.lastRound()
     const userCanClaim = await canClaim(address, lastRound)
     if (!userCanClaim){
         return "Looks like you've already claimed your coins this round; try again next round!"
@@ -94,5 +82,42 @@ export const generateResponse = async (address: string)=>{
     const sig = await generateSignature(address, lastRound)
 
     return `Request approved! Click here to claim your coins: ${process.env.CLAIM_URL}/${lastRound}/${address}/${sig}`
+}
 
+export interface ContractConnection {
+    arbWallet: ethers.Wallet
+    DistributionsContract: Contract
+    SubscriptionsContract: Contract
+    PointsContract: Contract
+}
+
+export function randomWallet(): ethers.Wallet {
+    return ethers.Wallet.createRandom()
+}
+
+export function generateConnection(wallet: ethers.Wallet) : ContractConnection {
+    const arbWallet = wallet.connect(arbProvider);
+
+    const DistributionsContract = new Contract(
+        contractAddresses.distributionAddress,
+        Distributions_v0,
+        arbWallet
+    );
+    const SubscriptionsContract = new Contract(
+        contractAddresses.subscriptionsAddress,
+        Subscriptions_v0,
+        arbWallet
+    );
+    const PointsContract = new Contract(
+        contractAddresses.pointsAddress,
+        SubredditPoints_v0,
+        arbWallet
+    );
+
+    return {
+        arbWallet,
+        DistributionsContract,
+        SubscriptionsContract,
+        PointsContract
+    }
 }

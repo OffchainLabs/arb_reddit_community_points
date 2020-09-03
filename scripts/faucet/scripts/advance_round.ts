@@ -1,4 +1,4 @@
-import { advanceRound, getLastRound } from '../../contracts_lib'
+import { advanceRound } from '../../contracts_lib'
 console.info('advancng to next round...');
 
 ( async ()=>{
