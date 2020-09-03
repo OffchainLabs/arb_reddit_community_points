@@ -25,24 +25,37 @@ function promiseFromChildProcess(child) : Promise<SubResults> {
     });
 }
 
-const runCount = 5
+const args = process.argv.slice(2)
+let processCountStr = "1"
+let totalTxesStr = "3000"
+if (args.length === 2) {
+    [processCountStr, totalTxesStr] = process.argv.slice(2)
+} else if (args.length !== 0) {
+    console.error("Must call without arguments or with benchmarks [processCount] [totalTxes]")
+    process.exit(0)
+}
 
-const totalClaimCount = 100000
-const totalSubCount = 25000
-const totalBurnCount = 75000
-const totalTransferCount = 100000
+const processCount = parseInt(processCountStr)
+const totalTxes = parseInt(totalTxesStr)
 
-const claimCount = totalClaimCount / runCount
-const subCount = totalSubCount / runCount
-const burnCount = totalBurnCount / runCount
-const transferCount = totalTransferCount / runCount;
+const totalClaimCount = totalTxes/3
+const totalSubCount = totalTxes/12
+const totalBurnCount = totalTxes/4
+const totalTransferCount = totalTxes/3
+
+const claimCount = totalClaimCount / processCount
+const subCount = totalSubCount / processCount
+const burnCount = totalBurnCount / processCount
+const transferCount = totalTransferCount / processCount;
+
+console.info(`Running benchmark for ${Math.floor(totalClaimCount)} claims, ${Math.floor(totalSubCount)} subscriptions, ${Math.floor(totalBurnCount)} burns, and ${Math.floor(totalTransferCount)} transfers`);
 
 (async () => {
     await initialSetup()
 
     let privKeys = []
     let setups = []
-    for (let i = 0; i < runCount; i++) {
+    for (let i = 0; i < processCount; i++) {
         const wallet = randomWallet()
         const { privateKey } = wallet
         setups.push(setupConn(generateConnection(wallet)));
@@ -57,7 +70,7 @@ const transferCount = totalTransferCount / runCount;
     console.time("batchTransfers")
 
     let runs = []
-    for (let i = 0; i < runCount; i++) {
+    for (let i = 0; i < processCount; i++) {
         const child = child_process.fork(`${__dirname}/benchmarkSub.js`, [privKeys[i], claimCount, subCount, burnCount, transferCount])
         
         runs.push(promiseFromChildProcess(child))
