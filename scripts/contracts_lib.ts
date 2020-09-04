@@ -23,7 +23,7 @@ export const arbProvider = new ethers.providers.JsonRpcProvider(
 const mnemonic = process.env.MNEUMONIC;
 const ethereumWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-const masterArbWallet = ethereumWallet.connect(arbProvider);
+export const masterArbWallet = ethereumWallet.connect(arbProvider);
 
 export const l1Provider = new ethers.providers.JsonRpcProvider(
     process.env.ETH_PROVIDER_URL
