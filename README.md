@@ -9,7 +9,7 @@
     - **ETH_PROVIDER_URL**: Ethereum (Layer 1) node / RPC provider url
     - **ARB_PROVIDER_URL**: Arbitrum aggregator / RPC provider url
     - **ROLLUP_ADDRESS**: Arbitrum chain address
-    - **MNEMONIC**: MNEMONIC phrase for main ETH account (deploys contracts)
+    - **MNEMONIC**: MNEMONIC phrase for main ETH account (does not need to be prefunded)
 
 
 - Install dependencies: `yarn install`
