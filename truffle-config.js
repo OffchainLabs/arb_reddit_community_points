@@ -2,9 +2,9 @@ const wrapProvider = require('arb-ethers-web3-bridge').wrapProvider
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 require('dotenv').config()
 
-const mnemonic = process.env.MNEUMONIC
+const mnemonic = process.env.MNEMONIC
 const arbProviderUrl= process.env.ARB_PROVIDER_URL
-  
+
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
