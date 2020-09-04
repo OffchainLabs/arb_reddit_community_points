@@ -3,7 +3,8 @@ import {
     flattenResults,
     SubResults,
     initialSetup,
-    setupConn
+    setupConn,
+    verifyClaimLogs
 } from "./benchmark_lib";
 
 import { generateConnection, randomWallet, ContractConnection } from "./contracts_lib";
@@ -51,8 +52,6 @@ const transferCount = totalTransferCount / processCount;
 console.info(`Running benchmark for ${Math.floor(totalClaimCount)} claims, ${Math.floor(totalSubCount)} subscriptions, ${Math.floor(totalBurnCount)} burns, and ${Math.floor(totalTransferCount)} transfers`);
 
 (async () => {
-    await initialSetup()
-
     let privKeys = []
     let setups = []
     for (let i = 0; i < processCount; i++) {
@@ -62,6 +61,8 @@ console.info(`Running benchmark for ${Math.floor(totalClaimCount)} claims, ${Mat
         privKeys.push(privateKey)
     }
     await Promise.all(setups)
+
+    await initialSetup()
 
     console.info("");
     console.info(chalk.blue("*** Running benchmarks ***"));
@@ -81,4 +82,6 @@ console.info(`Running benchmark for ${Math.floor(totalClaimCount)} claims, ${Mat
 
     await printTotalGasUsed([].concat(...runResults.map(flattenResults)))
     console.timeEnd("batchTransfers")
+
+    await verifyClaimLogs(generateConnection(randomWallet()), totalClaimCount)
 })();

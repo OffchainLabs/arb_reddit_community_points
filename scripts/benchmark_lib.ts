@@ -292,30 +292,25 @@ export const verifyUpdates = async (conn: ContractConnection) => {
         "Error: Subscribes/burns unsuccessful"
     );
 
-    await verifyClaimLogs(conn)
     await verifySubscribeLogs(conn)
     await verifyBurnLogs(conn)
     await verifyTransferLogs(conn)
 }
 
 
-export const verifyClaimLogs = async (conn: ContractConnection) => {
-    for (const address of updates.claims.claimedAddresses) {
-        const claimLogs = await arbProvider.getLogs({
-            fromBlock: updates.initialBlockHeight,
-            ...conn.DistributionsContract.filters.ClaimPoints(null, address),
-        });
-
-        if (claimLogs.length == 0) {
-            console.info(chalk.red(`Couldn't find claim log for claim to ${address}`))
-            return
-        }
-
-        if (claimLogs.length > 1) {
-            console.info(chalk.red(`Too many claim logs for ${address}`))
-            return
-        }
-    }
+export const verifyClaimLogs = async (conn: ContractConnection, claimCount: number) => {
+    console.log(`Searching for claims starting from ${updates.initialBlockHeight}`)
+    const claimLogs = await arbProvider.getLogs({
+        fromBlock: updates.initialBlockHeight,
+        ...conn.DistributionsContract.filters.ClaimPoints(),
+    })
+    outputResult(
+        claimLogs.length === claimCount,
+        `${claimLogs.length} claim events emited`,
+        `Error emiting claim events events:${
+            claimLogs.length
+        } target:${claimCount}`
+    );
 }
 
 export const verifySubscribeLogs = async (conn: ContractConnection) => {
