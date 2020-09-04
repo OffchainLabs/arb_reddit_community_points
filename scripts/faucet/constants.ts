@@ -10,6 +10,6 @@ export default  {
     privateKey: process.env.PRIVATE_KEY,
     tokenAddress: process.env.TOKEN_ADDRESS,
     distributionAddress: contractAddresses.distributionAddress,
-    mneumonic: process.env.MNEUMONIC,
+    mnemonic: process.env.MNEMONIC,
     claimUrl: process.env.CLAIM_URL
 }
